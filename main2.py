@@ -10,15 +10,22 @@ from reportlab.lib.colors import HexColor
 from PIL import Image, ImageDraw
 import textwrap
 
+def draw_entry_left(c, text, visual_setup, y_position, page_number):
+    y_position, page_number = draw_entry(c, text, visual_setup, 60, y_position, page_number)
+    return y_position, page_number
 
-def draw_entry(c, text, visual_setup, y_position, page_number):
+def draw_entry(c, text, visual_setup, x_position, y_position, page_number):
     c.setFillColor(HexColor(visual_setup['color']))
     c.setFont(visual_setup['font'], visual_setup['font_size'])
     text_wrapped = textwrap.wrap(text, width=visual_setup['width'])
     for line in text_wrapped:
-        c.drawString(270, y_position, line)
+        c.drawString(x_position, y_position, line)
         y_position -= visual_setup['Y_delta']
 
+    return y_position, page_number
+
+def draw_entry_right(c, text, visual_setup, y_position, page_number):
+    y_position, page_number = draw_entry(c, text, visual_setup, 270, y_position, page_number)
     return y_position, page_number
 
 def create_round_mask(image_path, output_path, size):
@@ -70,6 +77,9 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
         y_position = height - (int(column_width) + 70)
         c.drawString(60, y_position, f"Email: {personal_info['email']}")
         y_position -= 20
+
+        # y_position, page_number = draw_entry_right(c, f"Email: {personal_info['email']}", visual_setup['degree'], y_position, page_number)
+
         c.drawString(60, y_position, f"Phone: {personal_info['phone']}")
 
         y_position -= 30
@@ -149,10 +159,6 @@ def create_cv(filename, cv_data_json, visual_config):
     page_number = 1
     y_offset = 50
 
-    def draw_summary_short(c, summary_short_text, visual_setup):
-        draw_entry(c, summary_short_text, visual_setup, height - visual_setup['y_top_minus'], page_number)
-
-
     def draw_experience(job, y_position, page_number, added_work_experience):
         if not added_work_experience:
             if y_position != height - 200:
@@ -182,8 +188,7 @@ def create_cv(filename, cv_data_json, visual_config):
                 add_footer(c, page_number, visual_config)
                 c.showPage()
                 page_number += 1
-                draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, height - 160,
-                                 page_number, visual_config)
+                draw_left_column_empty(c, height, visual_config)
                 c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
                 c.setFillColor(HexColor(visual_config['colors']['text']))
                 y_position = height - 160
@@ -191,10 +196,10 @@ def create_cv(filename, cv_data_json, visual_config):
         return y_position, page_number, added_work_experience
 
     def draw_education(edu, y_position, visual_setup, page_number):
-        y_position, page_number = draw_entry(c, edu["school"], visual_setup['school_name'], y_position - 10, page_number)
+        y_position, page_number = draw_entry_right(c, edu["school"], visual_setup['school_name'], y_position - 10, page_number)
         text = f'{edu["degree"]}, {edu["field_of_study"]}'
-        y_position, page_number = draw_entry(c, text, visual_setup['degree'], y_position, page_number)
-        y_position, page_number = draw_entry(c, edu['years'], visual_setup['years'], y_position, page_number)
+        y_position, page_number = draw_entry_right(c, text, visual_setup['degree'], y_position, page_number)
+        y_position, page_number = draw_entry_right(c, edu['years'], visual_setup['years'], y_position, page_number)
 
         return y_position, page_number
 
@@ -226,8 +231,7 @@ def create_cv(filename, cv_data_json, visual_config):
                 add_footer(c, page_number, visual_config)
                 c.showPage()
                 page_number += 1
-                draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, height - 160,
-                                 page_number, visual_config)
+                draw_left_column_empty(c, height, visual_config)
                 c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
                 c.setFillColor(HexColor(visual_config['colors']['text']))
                 y_position = height - 160
@@ -253,7 +257,7 @@ def create_cv(filename, cv_data_json, visual_config):
 
     def add_linkedin_info(c, my_linkedin_link, visual_config_section):
         page_number = 2
-        y_position, page_number = draw_entry(c, visual_config_section['text'], visual_config_section, visual_config_section['y_position'], page_number)
+        y_position, page_number = draw_entry_right(c, visual_config_section['text'], visual_config_section, visual_config_section['y_position'], page_number)
 
         c.setFillColor(HexColor(visual_config['colors']['link']))
         link_text = my_linkedin_link
@@ -269,10 +273,10 @@ def create_cv(filename, cv_data_json, visual_config):
     draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, y_position, page_number,
                      visual_config)
 
-    y_position, page_number = draw_entry(c, personal_info["name"], visual_config['name_and_surname'], height - visual_config['name_and_surname']['y_top_minus'], page_number)
-    y_position, page_number = draw_entry(c, summary_short, visual_config['summary_short'], height - visual_config['summary_short']['y_top_minus'], page_number)
-    y_position, page_number = draw_entry(c, "Summary", visual_config['section_name'], height - visual_config['summary']['y_top_minus'], page_number)
-    y_position, page_number = draw_entry(c, summary, visual_config['summary'], y_position - 10, page_number)
+    y_position, page_number = draw_entry_right(c, personal_info["name"], visual_config['name_and_surname'], height - visual_config['name_and_surname']['y_top_minus'], page_number)
+    y_position, page_number = draw_entry_right(c, summary_short, visual_config['summary_short'], height - visual_config['summary_short']['y_top_minus'], page_number)
+    y_position, page_number = draw_entry_right(c, "Summary", visual_config['section_name'], height - visual_config['summary']['y_top_minus'], page_number)
+    y_position, page_number = draw_entry_right(c, summary, visual_config['summary'], y_position - 10, page_number)
 
     #
     # y_position -= 210
@@ -298,12 +302,12 @@ def create_cv(filename, cv_data_json, visual_config):
     page_number += 1
     draw_left_column_empty(c, height, visual_config)
 
-    y_position, page_number = draw_entry(c, "Education", visual_config['section_name'], height - visual_config['education']['y_top_minus'], page_number)
+    y_position, page_number = draw_entry_right(c, "Education", visual_config['section_name'], height - visual_config['education']['y_top_minus'], page_number)
 
     for edu in education:
         y_position, page_number = draw_education(edu, y_position, visual_config['education'], page_number)
 
-    y_position, page_number = draw_entry(c, "Courses", visual_config['section_name'], y_position, page_number)
+    y_position, page_number = draw_entry_right(c, "Courses", visual_config['section_name'], y_position, page_number)
 
 
     for course in courses:
