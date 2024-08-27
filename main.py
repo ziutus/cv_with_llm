@@ -20,26 +20,26 @@ def create_round_mask(image_path, output_path, size):
         im.save(output_path, format="PNG")
 
 
-def add_footer(c, page_num, visual_config):
+def add_footer(c, page_num, visual_config_footer):
     """Adds a footer with the page number."""
     width, height = A4
-    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
-    c.setFillColor(HexColor(visual_config['colors']['footer']))
+    c.setFont(visual_config_footer['fonts']['default'], visual_config_footer['sizes']['small'])
+    c.setFillColor(HexColor(visual_config_footer['colors']['footer']))
     footer_text = f"Page {page_num}"
     c.drawString((width / 2) - 20, 30, footer_text)
 
 
 def draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, y_start, page_number,
-                     visual_config):
+                     visual_config_left):
     """Draws the left column with personal data, top skills, certificates, languages, and links."""
 
     column_width = 200  # Adjusted width of the left column
 
-    c.setFillColor(HexColor(visual_config['colors']['grey_background']))
+    c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
     c.rect(50, 50, column_width, height - 100, stroke=0, fill=1)
 
     if page_number == 1:
-        c.setFillColor(HexColor(visual_config['colors']['highlight']))
+        c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
 
         photo_path = 'photo.jpg'
         round_photo_path = 'round_photo.png'
@@ -47,7 +47,7 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
         c.drawImage(round_photo_path, 50, height - (int(column_width) + 50), width=column_width, height=column_width,
                     mask='auto')
 
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
+        c.setFont(visual_config_left['fonts']['default'], visual_config_left['sizes']['small'])
 
         y_position = height - (int(column_width) + 70)
         c.drawString(60, y_position, f"Email: {personal_info['email']}")
@@ -64,20 +64,20 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
             for line in wrapped_link_lines:
                 if line.endswith(link_name_text):
                     link_part = line[:-len(link_name_text)]
-                    c.setFillColor(HexColor(visual_config['colors']['highlight']))
+                    c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
                     c.drawString(60, y_position, link_part)
-                    c.setFillColor(HexColor(visual_config['colors']['grey_background']))
+                    c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
                     c.drawString(60 + c.stringWidth(link_part), y_position, link_name_text)
                 else:
-                    c.setFillColor(HexColor(visual_config['colors']['highlight']))
+                    c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
                     c.drawString(60, y_position, line)
                 y_position -= 12
 
         y_position -= 20
-        c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['small'])
-        c.setFillColor(HexColor(visual_config['colors']['highlight']))
+        c.setFont(visual_config_left['fonts']['bold'], visual_config_left['sizes']['small'])
+        c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
         c.drawString(60, y_position, "Top Skills")
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
+        c.setFont(visual_config_left['fonts']['default'], visual_config_left['sizes']['small'])
 
         y_position -= 20
         for skill in top_skills:
@@ -85,10 +85,10 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
             y_position -= 20
 
         y_position -= 20
-        c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['small'])
-        c.setFillColor(HexColor(visual_config['colors']['highlight']))
+        c.setFont(visual_config_left['fonts']['bold'], visual_config_left['sizes']['small'])
+        c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
         c.drawString(60, y_position, "Certificates")
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
+        c.setFont(visual_config_left['fonts']['default'], visual_config_left['sizes']['small'])
 
         y_position -= 20
         for certificate in certificates:
@@ -96,10 +96,10 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
             y_position -= 20
 
         y_position -= 20
-        c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['small'])
-        c.setFillColor(HexColor(visual_config['colors']['highlight']))
+        c.setFont(visual_config_left['fonts']['bold'], visual_config_left['sizes']['small'])
+        c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
         c.drawString(60, y_position, "Languages")
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
+        c.setFont(visual_config_left['fonts']['default'], visual_config_left['sizes']['small'])
 
         y_position -= 20
         for language in languages:
@@ -120,16 +120,16 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     page_number = 1
     y_offset = 50
 
-    def draw_name_left(c, personal_info, summary_short):
+    def draw_name_left(c, personal_info_left, summary_short_left):
         c.setFillColor(HexColor(visual_config['colors']['text']))
         c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['title'])
-        c.drawString(270, height - 100, personal_info["name"])
+        c.drawString(270, height - 100, personal_info_left["name"])
         c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
 
         c.setFillColor(HexColor(visual_config['colors']['grey_background']))
         y_position = height - 130
-        summary_lines = textwrap.wrap(summary_short, width=55)
-        for line in summary_lines:
+        summary_lines_left = textwrap.wrap(summary_short_left, width=55)
+        for line in summary_lines_left:
             c.drawString(270, y_position, line)
             y_position -= 15
 
@@ -230,8 +230,8 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
 
         return y_position, page_number
 
-    def draw_personal_data_info(c, y_position, personal_data_info, visual_config):
-        pd_config = visual_config['personal_data_info']
+    def draw_personal_data_info(c, y_position, personal_data, visual_config_section):
+        pd_config = visual_config_section['personal_data_info']
         width = pd_config['width']  # Pobranie szerokości tekstu
         font = pd_config['font']  # Pobranie czcionki
         font_size = pd_config['font_size']  # Pobranie rozmiaru czcionki
@@ -242,22 +242,22 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
 
         y_position = 90
         footer_margin = 50
-        wrapped_info_lines = textwrap.wrap(personal_data_info, width=width)  # Użyj szerokości z pliku konfiguracyjnego
+        wrapped_info_lines = textwrap.wrap(personal_data, width=width)  # Użyj szerokości z pliku konfiguracyjnego
 
-        for line in wrapped_info_lines:
-            c.drawString(270, y_position, line)
+        for personal_line in wrapped_info_lines:
+            c.drawString(270, y_position, personal_line)
             y_position -= 10
 
         return y_position
 
-    def add_linkedin_info(c, y_position, linkedin_link):
+    def add_linkedin_info(c, y_position, my_linkedin_link):
         info_text = "You can find more information about my experience on my LinkedIn profile:"
         c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
         c.setFillColor(HexColor(visual_config['colors']['link']))
         c.drawString(270, y_position, info_text)
         y_position -= 15
         c.setFillColor(HexColor(visual_config['colors']['link']))
-        link_text = linkedin_link
+        link_text = my_linkedin_link
         c.drawString(270, y_position, link_text)
         underline_y = y_position - 1
         link_width = c.stringWidth(link_text)
