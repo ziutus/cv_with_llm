@@ -230,13 +230,19 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
 
         return y_position, page_number
 
-    def draw_personal_data_info(c, y_position, personal_data_info):
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
-        c.setFillColor(HexColor(visual_config['colors']['link']))
+    def draw_personal_data_info(c, y_position, personal_data_info, visual_config):
+        pd_config = visual_config['personal_data_info']
+        width = pd_config['width']  # Pobranie szerokości tekstu
+        font = pd_config['font']  # Pobranie czcionki
+        font_size = pd_config['font_size']  # Pobranie rozmiaru czcionki
+        color = pd_config['color']  # Pobranie koloru tekstu
+
+        c.setFont(font, font_size)
+        c.setFillColor(HexColor(color))
 
         y_position = 90
         footer_margin = 50
-        wrapped_info_lines = textwrap.wrap(personal_data_info, width=80)
+        wrapped_info_lines = textwrap.wrap(personal_data_info, width=width)  # Użyj szerokości z pliku konfiguracyjnego
 
         for line in wrapped_info_lines:
             c.drawString(270, y_position, line)
@@ -316,7 +322,7 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     for course in courses:
         y_position, page_number = draw_courses(course, y_position, page_number, first_page=True)
 
-    y_position = draw_personal_data_info(c, y_position, personal_data_info)
+    y_position = draw_personal_data_info(c, y_position, personal_data_info, visual_config)
 
     add_footer(c, page_number, visual_config)
 
