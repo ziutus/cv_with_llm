@@ -1,0 +1,108 @@
+personal_info:
+  name: "Krzysztof Józwiak"
+  email: "krzysztof@itsnap.eu"
+  phone: "+48 790 579 537"
+
+top_skills:
+  - Python
+  - AWS
+  - Kubernetes
+
+languages:
+  - English
+  - Polish
+
+summary_short: |
+  Passionate SRE/DevOps with a strong Unix background, blending automation with Python and a keen interest in AI and 
+  large language models (LLMs)
+
+summary: |
+  DevOps Engineer with 20 years of experience in IT, specializing in AWS, Kubernetes, and Python. Proven track record 
+  in automating deployments, securing applications, and supporting development teams in large corporations such as 
+  Philip Morris International and Citi Bank International. Experienced in working in multicultural teams, collaborating 
+  with professionals from the US, India, and other countries. Passionate about the development and integration of AI, 
+  specifically Large Language Models (LLM). Seeking to leverage expertise in cloud, DevOps, and AI to contribute to 
+  innovative and forward-thinking projects.
+
+education:
+  - school: The Academy of Information Technology
+    degree: Master's Degree
+    field_of_study: Information Technology
+    years: 2008 - 2010
+  - school: The University of Humanities and Economics in Lodz
+    degree: Bachelor's Degree
+    field_of_study: Information Technology
+    years: 2003 - 2008
+
+courses:
+  - year: 2023
+    name: "AI Devs 2 - Connect GPT-4 with application and automation logic"
+    link: "https://credsverse.com/credentials/680c7611-02db-40b6-8760-ce55aea592ea"
+  - year: 2022
+    name: "AI Devs - programowanie w parze z AI"
+    link: "https://certs.aidevs.pl/cert/805bdd1b57105230e02fe53b9ba0017b1131d357/en"
+  - year: 2021
+    name: "AppSync - The AppSync Masterclass"
+    link: "https://school.theburningmonk.com/courses/appsync-masterclass-premium"
+  - year: 2020
+    name: "Data Lake. Analiza danych w chmurze AWS"
+    link: "https://akademia.serverlesspolska.pl/szkolenie-data-lake/"
+
+certificates:
+  - AI Devs 2 - Connect GPT-4 with application and automation logicAI Devs 2
+  - AWS Certified SysOps Administrator – Associate
+  - AWS Certified Solutions Architect – Associate
+
+links:
+  - name: Linkedin
+    link: https://www.linkedin.com/in/krzysztof-jozwiak-sre-with-ai-skills/
+  - name: GitHub
+    link: https://github.com/ziutus/
+
+experience:
+  - employer: "Transition Technologies PSC"
+    position: "DevOps Engineer"
+    period: "March 2024 - Present"
+    location: "Lodz Metropolitan Area"
+    description: |
+      Supporting customer account
+      Tasks:
+      * Update documentation about AWS resources
+      * Taking care about EC2 instances (free space, create new, resolving routing issues)
+      * Taking care about RDS instances
+      * Supporting Atlasian team
+      * Planning update of setup (migration to Terraform, implement new features etc)
+      Internal Developer Platform (IDP)
+      * Supporting internal clients
+      * Implementing new solutions like websocket support on Nginx proxy
+
+  - employer: "Philip Morris International (Contractor)"
+    position: "Site Reliability Engineer (SRE)"
+    period: "Feb 2023 - Jul 2024"
+    location: "Remote"
+    description: |
+      Tasks:
+      * Sole SRE responsible for the infrastructure and service maintenance for my "product".
+      * Independently made critical decisions regarding infrastructure setup and maintenance.
+      * Utilized an internal portal for infrastructure management, improving efficiency and collaboration with development and operations teams.
+      * Assisted developers in resolving AWS-related issues and helped them familiarize with and use services such as Athena, Glue, 
+        Lambda, and API Gateway.
+      * Maintaining automated application deployment processes using Jenkins through CloudBees, achieving pipeline availability 
+        of 99.23%, maintaining Infrastructure as Code (IaC) using Terraform Enterprise, and getting overall service availability of 
+        99.95%.
+      * Ensured the product had no critical or high security issues reported in Brinqa by reconfiguring EKS clusters, modifying 
+        access policies, and improving various security settings, achieving and maintaining this status over one year.
+      * Managing and optimizing AWS infrastructure usage, reducing yearly cost of application by 50%.
+      * Creating Python scripts to validate settings, such as comparing Cognito users with AAD or comparing repositories with 
+        Terraform code.
+
+    technologies:
+      - Kubernetes
+      - AWS
+      - Python
+      - IIoT
+
+personal_data_info: | 
+    I hereby give consent for my personal data to be processed for the purposes of recruitment, in accordance with the Personal 
+    Data Protection Act dated 29.08.1997 (uniform text: Journal of Laws of the Republic of Poland 2002 No 101, item 926 with 
+    further amendments)

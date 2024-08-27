@@ -1,0 +1,17 @@
+fonts:
+  default: 'DejaVuSans'
+  bold: 'DejaVuSans-Bold'
+  italic: 'DejaVuSans-Oblique'
+
+sizes:
+  title: 24
+  subtitle: 16
+  normal: 12
+  small: 10
+
+colors:
+  text: '#000000'
+  highlight: '#FFFFFF'
+  link: '#0000FF'
+  grey_background: '#D3D3D3'
+  footer: '#808080'
