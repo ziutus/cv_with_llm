@@ -28,6 +28,12 @@ def add_footer(c, page_num, visual_config_footer):
     footer_text = f"Page {page_num}"
     c.drawString((width / 2) - 20, 30, footer_text)
 
+def draw_left_column_empty(c, height, visual_config_left):
+    column_width = 200  # Adjusted width of the left column
+
+    c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
+    c.rect(50, 50, column_width, height - 100, stroke=0, fill=1)
+
 
 def draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, y_start, page_number,
                      visual_config_left):
@@ -107,9 +113,20 @@ def draw_left_column(c, personal_info, top_skills, certificates, languages, link
             y_position -= 20
 
 
-def create_cv(filename, personal_info, top_skills, certificates, languages, summary, summary_short, experience,
-              education, links, courses, personal_data_info, visual_config):
+def create_cv(filename, cv_data_json, visual_config):
     c = canvas.Canvas(filename, pagesize=A4)
+
+    personal_info = cv_data_json.get("personal_info", {})
+    top_skills = cv_data_json.get("top_skills", [])
+    certificates = cv_data_json.get("certificates", [])
+    languages = cv_data_json.get("languages", [])
+    summary = cv_data_json.get("summary", "")
+    summary_short = cv_data_json.get("summary_short", "")
+    experience = cv_data_json.get("experience", [])
+    education = cv_data_json.get("education", [])
+    links = cv_data_json.get("links", [])
+    courses = cv_data_json.get("courses", [])
+    personal_data_info = cv_data_json.get("personal_data_info", "")
 
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'DejaVuSans.ttf'))
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'DejaVuSans-Bold.ttf'))
@@ -120,16 +137,29 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     page_number = 1
     y_offset = 50
 
-    def draw_name_left(c, personal_info_left, summary_short_left):
-        c.setFillColor(HexColor(visual_config['colors']['text']))
-        c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['title'])
-        c.drawString(270, height - 100, personal_info_left["name"])
-        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
+    def draw_name_and_surname(c, personal_info_left, visual_setup):
+        c.setFillColor(HexColor(visual_setup['color']))
+        c.setFont(visual_setup['font'], visual_setup['font_size'])
+        c.drawString(270, height - visual_setup['y_top_minus'], personal_info_left["name"])
 
-        c.setFillColor(HexColor(visual_config['colors']['grey_background']))
-        y_position = height - 130
-        summary_lines_left = textwrap.wrap(summary_short_left, width=55)
-        for line in summary_lines_left:
+    def draw_summary_short(c, summary_short_text, visual_setup):
+        c.setFillColor(HexColor(visual_setup['color']))
+        c.setFont(visual_setup['font'], visual_setup['font_size'])
+        y_position = height - visual_setup['y_top_minus']
+        summary_lines_wrapped = textwrap.wrap(summary_short_text, width=visual_setup['width'])
+        for line in summary_lines_wrapped:
+            c.drawString(270, y_position, line)
+            y_position -= 15
+
+    def draw_summary(c, summary_text, visual_setup):
+        c.setFillColor(HexColor(visual_setup['color']))
+        c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['subtitle'])
+        y_position = height - visual_setup['y_top_minus']
+        c.drawString(270, y_position, "Summary")
+        y_position -= 20
+        c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
+        summary_lines = textwrap.wrap(summary, width=53)
+        for line in summary_lines:
             c.drawString(270, y_position, line)
             y_position -= 15
 
@@ -230,30 +260,28 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
 
         return y_position, page_number
 
-    def draw_personal_data_info(c, y_position, personal_data, visual_config_section):
-        pd_config = visual_config_section['personal_data_info']
-        width = pd_config['width']  # Pobranie szerokości tekstu
-        font = pd_config['font']  # Pobranie czcionki
-        font_size = pd_config['font_size']  # Pobranie rozmiaru czcionki
-        color = pd_config['color']  # Pobranie koloru tekstu
+    def draw_personal_data_info(c, personal_data, visual_config_section):
+        visual_config = visual_config_section['personal_data_info']
+        width = visual_config['width']  # Pobranie szerokości tekstu
+        font = visual_config['font']  # Pobranie czcionki
+        font_size = visual_config['font_size']  # Pobranie rozmiaru czcionki
+        color = visual_config['color']  # Pobranie koloru tekstu
+        y_position = visual_config['y_position']
 
         c.setFont(font, font_size)
         c.setFillColor(HexColor(color))
 
-        y_position = 90
-        footer_margin = 50
         wrapped_info_lines = textwrap.wrap(personal_data, width=width)  # Użyj szerokości z pliku konfiguracyjnego
 
         for personal_line in wrapped_info_lines:
             c.drawString(270, y_position, personal_line)
             y_position -= 10
 
-        return y_position
-
-    def add_linkedin_info(c, y_position, my_linkedin_link):
-        info_text = "You can find more information about my experience on my LinkedIn profile:"
+    def add_linkedin_info(c, my_linkedin_link, visual_config_section):
+        info_text = "More information about my experience on my LinkedIn profile:"
         c.setFont(visual_config['fonts']['default'], visual_config['sizes']['small'])
         c.setFillColor(HexColor(visual_config['colors']['link']))
+        y_position = visual_config_section['y_position']
         c.drawString(270, y_position, info_text)
         y_position -= 15
         c.setFillColor(HexColor(visual_config['colors']['link']))
@@ -269,20 +297,12 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     y_position = height - 160
     draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, y_position, page_number,
                      visual_config)
-    draw_name_left(c, personal_info, summary_short)
+    draw_name_and_surname(c, personal_info, visual_config['name_and_surname'])
+    draw_summary_short(c, summary_short, visual_config['summary_short'])
+    draw_summary(c, summary, visual_config['summary'])
 
-    y_position = height - 200
-    c.setFillColor(HexColor(visual_config['colors']['text']))
-    c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['subtitle'])
-    c.drawString(270, y_position, "Summary")
-    y_position -= 20
-    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
-    summary_lines = textwrap.wrap(summary, width=53)
-    for line in summary_lines:
-        c.drawString(270, y_position, line)
-        y_position -= 15
 
-    y_position -= 20
+    y_position -= 210
     added_work_experience = False
 
     y_position, page_number, added_work_experience = draw_experience(experience[0], y_position - 20, page_number,
@@ -295,16 +315,19 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     linkedin_link = next((link['link'] for link in links if link['name'].lower() == 'linkedin'), None)
     if linkedin_link:
         y_position -= 30
-        add_linkedin_info(c, y_position, linkedin_link)
+        add_linkedin_info(c, linkedin_link, visual_config['linkedin_more_info'])
         y_position -= 30
 
     add_footer(c, page_number, visual_config)
+
+    #
+    # education and courses are always on separate page
+    #
     c.showPage()
     page_number += 1
-    draw_left_column(c, personal_info, top_skills, certificates, languages, links, height, y_position, page_number,
-                     visual_config)
+    draw_left_column_empty(c, height, visual_config)
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
-    y_position = height - 50
+    y_position = height - visual_config['education']['y_top_minus']
     c.setFillColor(HexColor(visual_config['colors']['text']))
 
     c.setFont(visual_config['fonts']['bold'], visual_config['sizes']['subtitle'])
@@ -322,7 +345,7 @@ def create_cv(filename, personal_info, top_skills, certificates, languages, summ
     for course in courses:
         y_position, page_number = draw_courses(course, y_position, page_number, first_page=True)
 
-    y_position = draw_personal_data_info(c, y_position, personal_data_info, visual_config)
+    draw_personal_data_info(c, personal_data_info, visual_config)
 
     add_footer(c, page_number, visual_config)
 
@@ -335,23 +358,12 @@ with open("cv_visual_config.yaml", "r", encoding="utf-8") as v_config_file:
 
 # Reading data from YAML file
 with open("cv_data.yaml", "r", encoding="utf-8") as file:
-    data = yaml.safe_load(file)
-    personal_info = data.get("personal_info", {})
-    top_skills = data.get("top_skills", [])
-    certificates = data.get("certificates", [])
-    languages = data.get("languages", [])
-    summary = data.get("summary", "")
-    summary_short = data.get("summary_short", "")
-    experience = data.get("experience", [])
-    education = data.get("education", [])
-    links = data.get("links", [])
-    courses = data.get("courses", [])
-    personal_data_info = data.get("personal_data_info", "")
+    cv_data = yaml.safe_load(file)
+
 
 # Removing Polish characters from the name
-name = unidecode.unidecode(personal_info["name"])
+surname_and_name = cv_data['personal_info']['name']
+pdf_filename = f"{unidecode.unidecode(surname_and_name).replace(' ', '_')}.pdf"
 
 # Creating a PDF file with personal information, top skills, certificates, summary, languages, work experience, education, links, courses, and personal data info
-pdf_filename = f"{name.replace(' ', '_')}.pdf"
-create_cv(pdf_filename, personal_info, top_skills, certificates, languages, summary, summary_short, experience,
-          education, links, courses, personal_data_info, visual_config)
+create_cv(pdf_filename, cv_data, visual_config)

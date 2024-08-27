@@ -4,7 +4,6 @@ fonts:
   italic: 'DejaVuSans-Oblique'
 
 sizes:
-  title: 24
   subtitle: 16
   normal: 12
   small: 10
@@ -15,3 +14,38 @@ colors:
   link: '#0000FF'
   grey_background: '#D3D3D3'
   footer: '#808080'
+
+personal_data_info:
+  width: 60  # Ustalenie szerokości zawijania tekstu dla personal_data_info
+  font: 'DejaVuSans-Oblique'  # Czcionka dla personal_data_info
+  font_size: 10  # Rozmiar czcionki dla personal_data_info
+  color: '#FF0000'  # Kolor czcionki dla personal_data_info
+  y_position: 90
+
+name_and_surname:
+  y_top_minus: 70
+  font_size: 24
+  color: '#000000'
+  font: 'DejaVuSans-Bold'
+
+summary_short:
+  y_top_minus: 95
+  width: 50
+  font: 'DejaVuSans-Oblique'
+  font_size: 12
+  color: '#A9A9A9'
+
+linkedin_more_info:
+  y_position: 70
+  font: 'DejaVuSans'
+
+
+summary:
+  y_top_minus: 160
+  width: 53
+  font: 'DejaVuSans'
+  font_size: 12
+  color: '#000000'
+
+education:
+  y_top_minus: 70
