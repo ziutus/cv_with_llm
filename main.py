@@ -156,6 +156,13 @@ def create_cv(filename, cv_data_json, visual_config):
                                                    y_position, page_number)
         y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
                                                    y_position, page_number)
+        if "key_achievements" in job:
+            y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['technologies'],
+                                                       y_position, page_number)
+            for achievement in job["key_achievements"]:
+                y_position, page_number = draw_entry_right(c, f"* {achievement}", visual_config['experience']['technologies'],
+                                                   y_position, page_number)
+
         if "technologies" in job:
             technologies = "Technologies: " + ", ".join(job["technologies"])
             y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
@@ -230,17 +237,17 @@ def create_cv(filename, cv_data_json, visual_config):
                      visual_config)
 
     y_position, page_number = draw_entry_right(c, personal_info["name"], visual_config['name_and_surname'], height - visual_config['name_and_surname']['y_top_minus'], page_number)
-    y_position, page_number = draw_entry_right(c, summary_short, visual_config['summary_short'], height - visual_config['summary_short']['y_top_minus'], page_number)
-    y_position, page_number = draw_entry_right(c, "Summary", visual_config['section_name'], height - visual_config['summary']['y_top_minus'], page_number)
+    # y_position, page_number = draw_entry_right(c, summary_short, visual_config['summary_short'], height - visual_config['summary_short']['y_top_minus'], page_number)
+    # y_position, page_number = draw_entry_right(c, "Summary", visual_config['section_name'], height - visual_config['summary']['y_top_minus'], page_number)
     y_position, page_number = draw_entry_right(c, summary, visual_config['summary'], y_position - 10, page_number)
 
     y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
                                                y_position -10, page_number)
 
-    y_position -= 15
+    y_position -= 4
     for job in experience:
         y_position, page_number = draw_experience_entry(job, y_position, page_number)
-        y_position -= 15
+        y_position -= 3
 
 
     # linkedin_link = next((link['link'] for link in links if link['name'].lower() == 'linkedin'), None)
@@ -255,14 +262,15 @@ def create_cv(filename, cv_data_json, visual_config):
     # draw_left_column_empty(c, height, visual_config)
 
     # y_position, page_number = draw_entry_right(c, "Education", visual_config['section_name'], height - visual_config['education']['y_top_minus'], page_number)
+    y_position -= 10
     y_position, page_number = draw_entry_right(c, "Education", visual_config['section_name'],  y_position, page_number)
 
     for edu in education:
         y_position, page_number = draw_education(edu, y_position, visual_config['education'], page_number)
 
+
+    y_position -= 10
     y_position, page_number = draw_entry_right(c, "Courses", visual_config['section_name'], y_position, page_number)
-
-
     for course in courses:
         y_position, page_number = draw_courses(course, y_position, visual_config['courses'], page_number)
 
@@ -274,17 +282,17 @@ def create_cv(filename, cv_data_json, visual_config):
 
 
 # Reading visual configuration from YAML file
-with open("cv_visual_config.yaml", "r", encoding="utf-8") as v_config_file:
+with open("cv_visual_config_new.yaml", "r", encoding="utf-8") as v_config_file:
     visual_config = yaml.safe_load(v_config_file)
 
 # Reading data from YAML file
-with open("cv_data.yaml", "r", encoding="utf-8") as file:
+with open("cv_data_20241105.yaml", "r", encoding="utf-8") as file:
     cv_data = yaml.safe_load(file)
 
 
 # Removing Polish characters from the name
 surname_and_name = cv_data['personal_info']['name']
-pdf_filename = f"{unidecode.unidecode(surname_and_name).replace(' ', '_')}.pdf"
+pdf_filename = f"{unidecode.unidecode(surname_and_name).replace(' ', '_')}_20241105.pdf"
 
 if os.path.isfile(pdf_filename):
     os.remove(pdf_filename)
