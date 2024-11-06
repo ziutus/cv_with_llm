@@ -9,8 +9,9 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.colors import HexColor
 import textwrap
 
-y_offset = 50
-y_left_column_text = 60
+y_offset = 40
+y_left_column_text = 50
+y_left_column_grey = 40
 width, height = A4
 column_left_width = 210
 
@@ -22,10 +23,10 @@ def draw_courses_left(c, course, y_position, visual_setup, page_number):
 
     if "link" in course and course["link"]:
         link_text = " (link)"
-        c.drawString(60, y_position, course_text)
+        c.drawString(y_left_column_text, y_position, course_text)
 
         c.setFillColor(HexColor(visual_config['colors']['link']))
-        link_start_x = 60 + c.stringWidth(course_text)
+        link_start_x = y_left_column_text + c.stringWidth(course_text)
         c.drawString(link_start_x, y_position, link_text)
         underline_y = y_position - 1
         link_width = c.stringWidth(link_text)
@@ -48,7 +49,7 @@ def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
     return y_position, page_number
 
 def draw_entry_left(c, text, visual_setup, y_position, page_number):
-    y_position, page_number = draw_entry(c, text, visual_setup, 60, y_position, page_number)
+    y_position, page_number = draw_entry(c, text, visual_setup, y_left_column_text, y_position, page_number)
     return y_position, page_number
 
 def draw_entry(c, text, visual_setup, x_position, y_position, page_number):
@@ -99,7 +100,7 @@ def add_footer(c, page_num, visual_config_footer):
 def draw_left_column_empty(c, height, visual_config_left):
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(50, 50, column_left_width, height - 100, stroke=0, fill=1)
+    c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
 
 
 def draw_left_column(c, personal_info, top_skills, tools, education, certificates, courses, languages, links, height, y_start, page_number,
@@ -107,7 +108,7 @@ def draw_left_column(c, personal_info, top_skills, tools, education, certificate
 
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(50, 50, column_left_width, height - 100, stroke=0, fill=1)
+    c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
