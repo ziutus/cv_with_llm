@@ -14,6 +14,8 @@ y_left_column_text = 50
 y_left_column_grey = 40
 width, height = A4
 column_left_width = 210
+y_right_column_text = 270
+y_right_column_text_max = 550
 
 
 def draw_courses_left(c, course, y_position, visual_setup, page_number):
@@ -76,7 +78,7 @@ def draw_entry_right(c, text, visual_setup, y_position, page_number):
 def draw_entry_right_with_superscript(c, text, super_text, config, y_position, page_number):
     # Rysowanie głównego tekstu
     c.setFont("Arial", 12)
-    c.drawString(270, y_position, text)
+    c.drawString(y_right_column_text, y_position, text)
 
     # Szerokość głównego tekstu
     text_width = c.stringWidth(text, "Arial", 12)
@@ -227,7 +229,7 @@ def create_cv(filename, cv_data_json, visual_config):
         wrapped_info_lines = textwrap.wrap(personal_data, width=width)  # Użyj szerokości z pliku konfiguracyjnego
 
         for personal_line in wrapped_info_lines:
-            c.drawString(270, y_position, personal_line)
+            c.drawString(y_right_column_text, y_position, personal_line)
             y_position -= 10
 
     c.setFillColor(HexColor(visual_config['colors']['text']))
