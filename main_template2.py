@@ -8,7 +8,6 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.colors import HexColor
-import textwrap
 
 width, height = A4
 
@@ -22,6 +21,35 @@ y_left_column_space_headers = 8
 
 y_right_column_text_min = 270
 y_right_column_text_max = 580
+
+
+def draw_experience_entry(c, job, y_position, page_number):
+    y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
+                                                                visual_config['experience']['period'],
+                                                                y_position, page_number)
+
+    y_position, page_number = draw_entry_right(c, job["employer"] + " | " + job["location"],
+                                               visual_config['experience']['employer'],
+                                               y_position, page_number)
+
+    y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
+                                               y_position, page_number)
+    y_position -= 4
+    if "key_achievements" in job:
+        y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['description'],
+                                                   y_position, page_number)
+        for achievement in job["key_achievements"]:
+            y_position, page_number = draw_entry_right(c, f"* {achievement}",
+                                                       visual_config['experience']['description'],
+                                                       y_position, page_number)
+
+    y_position -= 4
+    if "technologies" in job:
+        technologies = "Technologies: " + ", ".join(job["technologies"])
+        y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
+                                                   y_position, page_number)
+    y_position -= 6
+    return y_position, page_number
 
 def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
     visual_config = visual_config_section['personal_data_info']
@@ -133,9 +161,6 @@ def draw_entry_right_with_superscript(c, text, super_text, config, y_position, p
     c.setFont("Arial", 12)
     c.drawString(y_right_column_text_min, y_position, text)
 
-    # Szerokość głównego tekstu
-    text_width = c.stringWidth(text, "Arial", 12)
-
     # Rysowanie górnego indeksu
     c.setFont("Arial", 10)
     x_new_position = y_right_column_text_max - c.stringWidth(super_text, "Arial", 10)
@@ -181,7 +206,6 @@ def draw_left_column(c, personal_info, top_skills, tools, education, certificate
 
             y_position, page_number = draw_entry_left(c, full_link_text, visual_config_left['left_default'], y_position,
                                                       page_number)
-
 
         y_position -= y_left_column_space_headers
         y_position, page_number = draw_entry_left(c, f"Top Skills", visual_config_left['left_section_name'], y_position, page_number)
@@ -241,41 +265,12 @@ def create_cv(filename, cv_data_json, visual_config):
     courses = cv_data_json.get("courses", [])
     personal_data_info = cv_data_json.get("personal_data_info", "")
 
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'ARIAL.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'ARIALBD.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'ARIALBLACKITALIC.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'fonts/ARIAL.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'fonts/ARIALBD.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'fonts/ARIALBLACKITALIC.TTF'))
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
 
     page_number = 1
-
-    def draw_experience_entry(job, y_position, page_number):
-
-        y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
-                                                                    visual_config['experience']['period'],
-                                                                    y_position, page_number)
-
-        y_position, page_number = draw_entry_right(c, job["employer"] + " | " + job["location"], visual_config['experience']['employer'],
-                                                   y_position, page_number)
-
-        y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
-                                                   y_position, page_number)
-        y_position -= 4
-        if "key_achievements" in job:
-            y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['description'],
-                                                       y_position, page_number)
-            for achievement in job["key_achievements"]:
-                y_position, page_number = draw_entry_right(c, f"* {achievement}", visual_config['experience']['description'],
-                                                   y_position, page_number)
-
-        y_position -= 4
-        if "technologies" in job:
-            technologies = "Technologies: " + ", ".join(job["technologies"])
-            y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
-                                                   y_position, page_number)
-        y_position -= 6
-        return y_position, page_number
-
-
 
     c.setFillColor(HexColor(visual_config['colors']['text']))
     y_position = height - 160
@@ -289,7 +284,7 @@ def create_cv(filename, cv_data_json, visual_config):
 
     y_position -= 4
     for job in experience:
-        y_position, page_number = draw_experience_entry(job, y_position, page_number)
+        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
         y_position -= 3
 
     visual_config_default = visual_config['left_default']
