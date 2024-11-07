@@ -19,6 +19,8 @@ y_left_column_text_max = y_left_column_text_min + column_left_width - 10
 
 y_left_column_space_headers = 8
 
+y_right_column_text_top_margin = 65
+
 y_right_column_text_min = 270
 y_right_column_text_max = 580
 
@@ -34,7 +36,7 @@ def draw_experience_entry(c, job, y_position, page_number):
 
     y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
                                                y_position, page_number)
-    y_position -= 4
+    y_position -= visual_config['experience']['Y_delta_default']
     if "key_achievements" in job:
         y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['description'],
                                                    y_position, page_number)
@@ -43,12 +45,12 @@ def draw_experience_entry(c, job, y_position, page_number):
                                                        visual_config['experience']['description'],
                                                        y_position, page_number)
 
-    y_position -= 4
+    y_position -= visual_config['experience']['Y_delta_default']
     if "technologies" in job:
         technologies = "Technologies: " + ", ".join(job["technologies"])
         y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
                                                    y_position, page_number)
-    y_position -= 6
+    y_position -= visual_config['experience']['Y_delta_after_technologies']
     return y_position, page_number
 
 def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
@@ -182,8 +184,18 @@ def draw_left_column_empty(c, height, visual_config_left):
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
     c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
 
-def draw_left_column(c, personal_info, top_skills, tools, education, certificates, own_projects, courses, languages, links, height, y_start, page_number,
-                     visual_config_left):
+def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
+
+    personal_info = cv_data_json.get("personal_info", {})
+    top_skills = cv_data_json.get("top_skills", [])
+    tools = cv_data_json.get("tools", [])
+    education = cv_data_json.get("education", [])
+    certificates = cv_data_json.get("certificates", [])
+    own_projects = cv_data_json.get("own_projects", [])
+    courses = cv_data_json.get("courses", [])
+    languages = cv_data_json.get("languages", [])
+    links = cv_data_json.get("links", [])
+
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
     c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
@@ -254,20 +266,46 @@ def draw_left_column(c, personal_info, top_skills, tools, education, certificate
         for language in languages:
             y_position, page_number = draw_entry_left(c, u"\u2022 " + language, visual_config_left['left_default'], y_position, page_number)
 
+
+def draw_right_column(c, cv_data_json, height, page_number, visual_config):
+
+    own_projects = cv_data_json.get("own_projects", [])
+    experience = cv_data_json.get("experience", [])
+    personal_data_info = cv_data_json.get("personal_data_info", "")
+
+    y_position = height - y_right_column_text_top_margin
+
+    y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
+                                               y_position, page_number)
+
+    y_position -= visual_config['right_own_project']['Y_top_margin']
+    for job in experience:
+        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
+        y_position -= visual_config['right_own_project']['Y_margin']
+
+    visual_config_default = visual_config['left_default']
+
+    if own_projects['position'] == "right":
+        y_position -= visual_config['right_own_project']['Y_delta']
+        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config['section_name'], y_position, page_number)
+        for project in own_projects["projects"]:
+            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
+
+            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_default, y_position,  page_number)
+            if "technologies" in project:
+                technologies = "Technologies: " + ", ".join(project["technologies"])
+                y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
+                                                           y_position, page_number)
+            y_position -= visual_config['right_own_project']['Y_delta']
+
+
+    draw_personal_data_info(c, personal_data_info, visual_config, page_number)
+
+    # add_footer(c, page_number, visual_config)
+
 def create_cv(filename, cv_data_json, visual_config):
     c = canvas.Canvas(filename, pagesize=A4)
 
-    personal_info = cv_data_json.get("personal_info", {})
-    top_skills = cv_data_json.get("top_skills", [])
-    certificates = cv_data_json.get("certificates", [])
-    languages = cv_data_json.get("languages", [])
-    experience = cv_data_json.get("experience", [])
-    education = cv_data_json.get("education", [])
-    links = cv_data_json.get("links", [])
-    tools = cv_data_json.get("tools", [])
-    own_projects = cv_data_json.get("own_projects", [])
-    courses = cv_data_json.get("courses", [])
-    personal_data_info = cv_data_json.get("personal_data_info", "")
 
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'fonts/ARIAL.TTF'))
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'fonts/ARIALBD.TTF'))
@@ -277,40 +315,9 @@ def create_cv(filename, cv_data_json, visual_config):
     page_number = 1
 
     c.setFillColor(HexColor(visual_config['colors']['text']))
-    y_position = height - 160
-    draw_left_column(c, personal_info, top_skills, tools, education, certificates,own_projects, courses, languages, links, height, y_position, page_number,
-                     visual_config)
+    draw_left_column(c, cv_data_json, height, page_number, visual_config)
+    draw_right_column(c, cv_data_json, height, page_number, visual_config)
 
-    y_position = height -55
-
-    y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
-                                               y_position -10, page_number)
-
-    y_position -= 4
-    for job in experience:
-        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
-        y_position -= 3
-
-    visual_config_default = visual_config['left_default']
-
-    if own_projects['position'] == "right":
-        y_position -= 10
-        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config['section_name'], y_position, page_number)
-        for project in own_projects["projects"]:
-            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
-
-            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_default, y_position,  page_number)
-            # y_position, page_number = draw_entry_right(c, project["technologies"], visual_config_default, y_position,  page_number)
-            if "technologies" in project:
-                technologies = "Technologies: " + ", ".join(project["technologies"])
-                y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
-                                                           y_position, page_number)
-            y_position -= 10
-
-
-    draw_personal_data_info(c, personal_data_info, visual_config, page_number)
-
-    # add_footer(c, page_number, visual_config)
 
     c.save()
 
