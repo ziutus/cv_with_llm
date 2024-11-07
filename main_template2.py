@@ -261,7 +261,6 @@ def create_cv(filename, cv_data_json, visual_config):
     top_skills = cv_data_json.get("top_skills", [])
     certificates = cv_data_json.get("certificates", [])
     languages = cv_data_json.get("languages", [])
-    summary = cv_data_json.get("summary", "")
     experience = cv_data_json.get("experience", [])
     education = cv_data_json.get("education", [])
     links = cv_data_json.get("links", [])
