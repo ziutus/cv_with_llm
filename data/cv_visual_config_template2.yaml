@@ -1,0 +1,179 @@
+section_name:
+    width: 43
+    font: 'Arial-Bold'
+    font_size: 14
+    Y_delta: 15
+    color: '#000000'
+
+
+fonts:
+  default: 'Arial'
+  bold: 'Arial-Bold'
+  italic: 'Arial-Oblique'
+
+sizes:
+  subtitle: 14
+  normal: 12
+  small: 10
+
+colors:
+  text: '#000000'
+  highlight: '#FFFFFF'
+  link: '#0000FF'
+  grey_background: '#F0F0F0'
+  footer: '#808080'
+
+left_section_name:
+    width: 43
+    font: 'Arial-Bold'
+    font_size: 10
+    Y_delta: 14
+    color: '#000000'
+
+left_name_surname:
+  font_size: 16
+  color: '#000000'
+  font: 'Arial-Bold'
+  width: 43
+  Y_delta: 14
+
+left_email_phone:
+  font_size: 10
+  color: '#000000'
+  font: 'Arial'
+  width: 43
+  Y_delta: 12
+
+left_top_skills:
+    width: 43
+    font: 'Arial'
+    font_size: 10
+    Y_delta: 15
+    color: '#000000'
+
+left_default:
+    width: 37
+    font: 'Arial'
+    font_size: 10
+    Y_delta: 11
+    color: '#000000'
+
+right_own_project:
+  Y_top_margin: 4
+  Y_margin: 3
+  Y_delta: 10
+
+personal_data_info:
+  width: 60  # Ustalenie szerokości zawijania tekstu dla personal_data_info
+  font: 'Arial'  # Czcionka dla personal_data_info
+  font_size: 10  # Rozmiar czcionki dla personal_data_info
+  color: '#FF0000'  # Kolor czcionki dla personal_data_info
+  y_position: 90
+  Y_delta: 13
+
+name_and_surname:
+  y_top_minus: 70
+  font_size: 24
+  color: '#000000'
+  font: 'Arial-Bold'
+  width: 43
+  Y_delta: 13
+
+summary_short:
+  y_top_minus: 95
+  width: 50
+  font: 'Arial-Oblique'
+  font_size: 12
+  color: '#A9A9A9'
+  Y_delta: 13
+
+summary:
+  y_top_minus: 95
+  width: 50
+  font: 'Arial-Oblique'
+  font_size: 12
+  color: '#A9A9A9'
+  Y_delta: 12
+
+experience:
+  Y_delta_default: 4
+  Y_delta_after_technologies: 6
+  employer:
+    width: 200
+    font: 'Arial-Oblique'
+    font_size: 9
+    Y_delta: 15
+    color: '#000000'
+  position:
+    width: 200
+    font: 'Arial-Bold'
+    font_size: 9
+    Y_delta: 13
+    color: '#000000'
+  period:
+    width: 43
+    font: 'Arial'
+    font_size: 9
+    Y_delta: 12
+    color: '#000000'
+  location:
+    width: 200
+    font: 'Arial-Bold'
+    font_size: 9
+    Y_delta: 12
+    color: '#000000'
+  description:
+    width: 73
+    font: 'Arial'
+    font_size: 9
+    Y_delta: 11
+    color: '#000000'
+  technologies:
+    width: 74
+    font: 'Arial'
+    font_size: 9
+    Y_delta: 11
+    color: '#000000'
+
+linkedin_more_info:
+  text: "More information about my experience on my LinkedIn profile:"
+  y_position: 60
+  font: 'Arial'
+  font_size: 8
+  width: 80
+  color: '#0000FF'
+  Y_delta: 12
+
+courses:
+  width: 42
+  font: 'Arial'
+  font_size: 9
+  Y_delta: 12
+  color: '#000000'
+
+
+
+education:
+  y_top_minus: 70
+  Y_delta_after_topic: 15
+  school_name:
+    width: 40
+    font: 'Arial-Bold'
+    font_size: 10
+    Y_delta: 14
+    color: '#000000'
+  degree:
+    width: 40
+    font: 'Arial'
+    font_size: 10
+    Y_delta: 14
+    color: '#000000'
+  years:
+    width: 40
+    font: 'Arial'
+    font_size: 10
+    Y_delta: 14
+    color: '#000000'
+
+  degree_font_size: 12
+  Y_delta_after_entry: 20
