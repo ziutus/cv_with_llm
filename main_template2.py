@@ -310,22 +310,25 @@ def create_cv(filename, cv_data_json, visual_config):
 
     c.save()
 
+if __name__ == '__main__':
+    company="20241106_aws_developer"
+    # company="20241105"
 
-with open("cv_visual_config_template2.yaml", "r", encoding="utf-8") as v_config_file:
-    visual_config = yaml.safe_load(v_config_file)
+    with open("data/cv_visual_config_template2.yaml", "r", encoding="utf-8") as v_config_file:
+        visual_config = yaml.safe_load(v_config_file)
 
-with open("cv_data_20241106_aws_developer.yaml", "r", encoding="utf-8") as file:
-    cv_data = yaml.safe_load(file)
+    with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
+        cv_data = yaml.safe_load(file)
 
 
-surname_and_name = cv_data['personal_info']['name']
-pdf_filename = f"{unidecode.unidecode(surname_and_name).replace(' ', '_')}_20241106_aws_developer.pdf"
+    surname_and_name = cv_data['personal_info']['name']
+    pdf_filename = f"output/{unidecode.unidecode(surname_and_name).replace(' ', '_')}_{company}.pdf"
 
-if os.path.isfile(pdf_filename):
-    os.remove(pdf_filename)
-    print(f"The Old {pdf_filename} has been removed.")
+    if os.path.isfile(pdf_filename):
+        os.remove(pdf_filename)
+        print(f"The Old {pdf_filename} has been removed.")
 
-create_cv(pdf_filename, cv_data, visual_config)
+    create_cv(pdf_filename, cv_data, visual_config)
 
-if os.path.isfile(pdf_filename):
-    print(f"The new {pdf_filename} has been generated.")
+    if os.path.isfile(pdf_filename):
+        print(f"The new {pdf_filename} has been generated.")
