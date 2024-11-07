@@ -234,9 +234,14 @@ def draw_left_column(c, personal_info, top_skills, tools, education, certificate
             y_position -= y_left_column_space_headers
             y_position, page_number = draw_entry_left(c, f"Own projects", visual_config_left['left_section_name'], y_position, page_number)
             for project in own_projects["projects"]:
-                y_position, page_number = draw_entry_left(c, u"\u2022 " + project["link_to_show"], visual_config_left['left_default'], y_position,  page_number)
-                y_position, page_number = draw_entry_left(c, project["name"] + f" ({project['technologies']})", visual_config_left['left_default'], y_position,  page_number)
-                y_position, page_number = draw_entry_left(c, project["time"], visual_config_left['left_default'], y_position,  page_number)
+                y_position, page_number = draw_entry_left(c, u"\u2022 " +  project["time"], visual_config_left['left_default'], y_position,  page_number)
+                if "technologies" in project:
+                    technologies = project["name"] + " (" + " ,".join(project["technologies"]) + ")"
+                    y_position, page_number = draw_entry_left(c, technologies,
+                                                               visual_config_left['left_default'],
+                                                               y_position, page_number)
+
+                y_position, page_number = draw_entry_left(c, project["link_to_show"], visual_config_left['left_default'], y_position,  page_number)
 
 
         y_position -= y_left_column_space_headers
