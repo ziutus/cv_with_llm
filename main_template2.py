@@ -11,22 +11,22 @@ from reportlab.lib.colors import HexColor
 
 width, height = A4
 
-y_bottom_margin = 20
-y_top_margin = 20
-y_left_column_grey = 40
-column_left_width = 210
-y_left_column_text_min = 50
+y_left_top_margin = 35
+y_top_margin = 30
+y_left_column_grey = 20
+column_left_width = 235
+y_left_column_text_min = 25
 y_left_column_text_max = y_left_column_text_min + column_left_width - 10
-y_left_column_grey_bottom = 30
+y_left_column_grey_bottom = 20
 
 y_left_column_space_headers = 8
 
-y_right_column_text_top_margin = 65
+y_right_column_text_top_margin = 35
 
 y_right_column_text_min = 270
 y_right_column_text_max = 580
 
-y_left_top_margin = 50
+y_bottom_margin = 20
 
 def draw_experience_entry(c, job, y_position, page_number):
     y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
@@ -62,7 +62,7 @@ def draw_personal_data_info(c, personal_data, visual_config_section, page_number
     c.setFont(visual_config['font'], visual_config['font_size'])
     c.setFillColor(HexColor(visual_config['color']))
 
-    draw_entry_right(c, personal_data, visual_config, visual_config['y_position'], page_number)
+    draw_entry_left(c, personal_data, visual_config, visual_config['y_position'], page_number)
 
 def split_and_keep_delimiters(s):
     pattern = r'([\s\-_])'
@@ -180,12 +180,12 @@ def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
 
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(y_left_column_grey, y_left_column_grey_bottom, column_left_width, height - 70, stroke=0, fill=1)
+    c.rect(y_left_column_grey, y_left_column_grey_bottom, column_left_width, height - 40, stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
 
-        y_position = height - 70
+        y_position = height - 40
 
         y_position, page_number = draw_entry_left(c, f"{personal_info['name']}", visual_config_left['left_name_surname'], y_position, page_number)
         y_position, page_number = draw_entry_left(c, f"Email: {personal_info['email']}", visual_config_left['left_email_phone'], y_position, page_number)
@@ -249,25 +249,11 @@ def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
             y_position, page_number = draw_entry_left(c, u"\u2022 " + language, visual_config_left['left_default'], y_position, page_number)
 
 
-def draw_right_column(c, cv_data_json, height, page_number, visual_config):
-
+def draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config):
     own_projects = cv_data_json.get("own_projects", [])
-    experience = cv_data_json.get("experience", [])
-    personal_data_info = cv_data_json.get("personal_data_info", "")
 
-    y_position = height - y_right_column_text_top_margin
-
-    y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
-                                               y_position, page_number)
-
-    #
-    y_position -= visual_config['right_own_project']['Y_top_margin']
-    for job in experience:
-        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
-        y_position -= visual_config['right_own_project']['Y_margin']
-
-    visual_config_default = visual_config['right_own_project_default']
-    visual_config_link = visual_config['right_own_project_link']
+    visual_config_default = visual_config['right_own_project']['default']
+    visual_config_link = visual_config['right_own_project']['link']
 
     if own_projects['position'] == "right":
         y_position -= visual_config['right_own_project']['Y_delta']
@@ -282,6 +268,23 @@ def draw_right_column(c, cv_data_json, height, page_number, visual_config):
                                                            y_position, page_number)
             y_position -= visual_config['right_own_project']['Y_delta']
 
+def draw_right_column(c, cv_data_json, height, page_number, visual_config):
+
+    experience = cv_data_json.get("experience", [])
+    personal_data_info = cv_data_json.get("personal_data_info", "")
+
+    y_position = height - y_right_column_text_top_margin
+
+    y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
+                                               y_position, page_number)
+
+    #
+    y_position -= visual_config['right_own_project']['Y_top_margin']
+    for job in experience:
+        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
+        y_position -= visual_config['right_own_project']['Y_margin']
+
+    draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config)
 
     draw_personal_data_info(c, personal_data_info, visual_config, page_number)
 
