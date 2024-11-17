@@ -11,22 +11,6 @@ from reportlab.lib.colors import HexColor
 
 width, height = A4
 
-y_left_top_margin = 35
-y_top_margin = 30
-y_left_column_grey = 20
-column_left_width = 235
-y_left_column_text_min = 25
-y_left_column_text_max = y_left_column_text_min + column_left_width - 10
-y_left_column_grey_bottom = 20
-
-y_left_column_space_headers = 8
-
-y_right_column_text_top_margin = 35
-
-y_right_column_text_min = 270
-y_right_column_text_max = 580
-
-y_bottom_margin = 20
 
 def draw_experience_entry(c, job, y_position, page_number):
     y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
@@ -312,6 +296,23 @@ def create_cv(filename, cv_data_json, visual_config):
 if __name__ == '__main__':
     # company="20241106_aws_developer"
     company="20241117"
+
+    y_left_top_margin = 35
+    y_top_margin = 30
+    y_left_column_grey = 20
+    column_left_width = 235
+    y_left_column_text_min = 25
+    y_left_column_text_max = y_left_column_text_min + column_left_width - 10
+    y_left_column_grey_bottom = 20
+
+    y_left_column_space_headers = 8
+
+    y_right_column_text_top_margin = 35
+
+    y_right_column_text_min = 270
+    y_right_column_text_max = 580
+
+    y_bottom_margin = 20
 
     with open("data/cv_visual_config_template2_2.yaml", "r", encoding="utf-8") as v_config_file:
         visual_config = yaml.safe_load(v_config_file)
