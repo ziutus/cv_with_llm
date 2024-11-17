@@ -11,11 +11,13 @@ from reportlab.lib.colors import HexColor
 
 width, height = A4
 
-y_offset = 20
+y_bottom_margin = 20
+y_top_margin = 20
 y_left_column_grey = 40
 column_left_width = 210
 y_left_column_text_min = 50
 y_left_column_text_max = y_left_column_text_min + column_left_width - 10
+y_left_column_grey_bottom = 30
 
 y_left_column_space_headers = 8
 
@@ -24,6 +26,7 @@ y_right_column_text_top_margin = 65
 y_right_column_text_min = 270
 y_right_column_text_max = 580
 
+y_left_top_margin = 50
 
 def draw_experience_entry(c, job, y_position, page_number):
     y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
@@ -55,16 +58,11 @@ def draw_experience_entry(c, job, y_position, page_number):
 
 def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
     visual_config = visual_config_section['personal_data_info']
-    width = visual_config['width']  # Pobranie szerokości tekstu
-    font = visual_config['font']  # Pobranie czcionki
-    font_size = visual_config['font_size']  # Pobranie rozmiaru czcionki
-    color = visual_config['color']  # Pobranie koloru tekstu
-    y_position = visual_config['y_position']
 
-    c.setFont(font, font_size)
-    c.setFillColor(HexColor(color))
+    c.setFont(visual_config['font'], visual_config['font_size'])
+    c.setFillColor(HexColor(visual_config['color']))
 
-    draw_entry_right(c, personal_data, visual_config, y_position, page_number)
+    draw_entry_right(c, personal_data, visual_config, visual_config['y_position'], page_number)
 
 def split_and_keep_delimiters(s):
     pattern = r'([\s\-_])'
@@ -83,23 +81,7 @@ def draw_courses_left(c, course, y_position, visual_setup, page_number):
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
     year_text = str(course["year"])
     course_text = f"{year_text} - {course['name']}"
-
-    if "link" in course and course["link"]:
-        link_text = " (link)"
-        c.drawString(y_left_column_text_min, y_position, course_text)
-
-        c.setFillColor(HexColor(visual_config['colors']['link']))
-        link_start_x = y_left_column_text_min + c.stringWidth(course_text)
-        c.drawString(link_start_x, y_position, link_text)
-        underline_y = y_position - 1
-        link_width = c.stringWidth(link_text)
-        c.line(link_start_x, underline_y, link_start_x + link_width, underline_y)
-        c.linkURL(course["link"], (link_start_x, y_position - 2, link_start_x + link_width, y_position + 12),
-                  relative=1)
-        c.setFillColor(HexColor(visual_config['colors']['text']))
-        y_position -= 15
-    else:
-        y_position, page_number = draw_entry_left(c, course_text, visual_setup, y_position, page_number)
+    y_position, page_number = draw_entry_left(c, course_text, visual_setup, y_position, page_number)
 
     return y_position, page_number
 
@@ -107,7 +89,7 @@ def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
     y_position, page_number = draw_entry_left(c, edu["school"], visual_setup['school_name'], y_position, page_number)
     y_position, page_number = draw_entry_left(c, edu['years'], visual_setup['years'], y_position, page_number)
     y_position, page_number = draw_entry_left(c, edu["degree"], visual_setup['degree'], y_position, page_number)
-    y_position -= 5
+    y_position -= visual_setup['Y_delta_after_education_entry']
 
     return y_position, page_number
 
@@ -145,12 +127,12 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
         c.drawString(x_position, y_position, line)
         y_position -= visual_setup['Y_delta']
 
-        if y_position < y_offset:
+        if y_position < y_bottom_margin:
             add_footer(c, page_number, visual_config)
             c.showPage()
             page_number += 1
             draw_left_column_empty(c, height, visual_config)
-            y_position = height - y_offset
+            y_position = height - y_top_margin
 
     return y_position, page_number
 
@@ -198,7 +180,7 @@ def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
 
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
+    c.rect(y_left_column_grey, y_left_column_grey_bottom, column_left_width, height - 70, stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
@@ -278,12 +260,14 @@ def draw_right_column(c, cv_data_json, height, page_number, visual_config):
     y_position, page_number = draw_entry_right(c, "Work Experience", visual_config['section_name'],
                                                y_position, page_number)
 
+    #
     y_position -= visual_config['right_own_project']['Y_top_margin']
     for job in experience:
         y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
         y_position -= visual_config['right_own_project']['Y_margin']
 
-    visual_config_default = visual_config['left_default']
+    visual_config_default = visual_config['right_own_project_default']
+    visual_config_link = visual_config['right_own_project_link']
 
     if own_projects['position'] == "right":
         y_position -= visual_config['right_own_project']['Y_delta']
@@ -291,7 +275,7 @@ def draw_right_column(c, cv_data_json, height, page_number, visual_config):
         for project in own_projects["projects"]:
             y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
 
-            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_default, y_position,  page_number)
+            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_link, y_position,  page_number)
             if "technologies" in project:
                 technologies = "Technologies: " + ", ".join(project["technologies"])
                 y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
@@ -309,7 +293,8 @@ def create_cv(filename, cv_data_json, visual_config):
 
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'fonts/ARIAL.TTF'))
     pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'fonts/ARIALBD.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'fonts/ARIALBLACKITALIC.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold-italic'], 'fonts/ARIALBLACKITALIC.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'fonts/ArialCEItalic.ttf'))
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
 
     page_number = 1
@@ -322,10 +307,10 @@ def create_cv(filename, cv_data_json, visual_config):
     c.save()
 
 if __name__ == '__main__':
-    company="20241106_aws_developer"
-    # company="20241105"
+    # company="20241106_aws_developer"
+    company="20241117"
 
-    with open("data/cv_visual_config_template2.yaml", "r", encoding="utf-8") as v_config_file:
+    with open("data/cv_visual_config_template2_2.yaml", "r", encoding="utf-8") as v_config_file:
         visual_config = yaml.safe_load(v_config_file)
 
     with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
