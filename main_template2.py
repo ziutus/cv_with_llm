@@ -297,6 +297,12 @@ if __name__ == '__main__':
     # company="20241106_aws_developer"
     company="20241117"
 
+    with open("data/cv_visual_config_template2_2.yaml", "r", encoding="utf-8") as v_config_file:
+        visual_config = yaml.safe_load(v_config_file)
+
+    with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
+        cv_data = yaml.safe_load(file)
+
     y_left_top_margin = 35
     y_top_margin = 30
     y_left_column_grey = 20
@@ -313,12 +319,6 @@ if __name__ == '__main__':
     y_right_column_text_max = 580
 
     y_bottom_margin = 20
-
-    with open("data/cv_visual_config_template2_2.yaml", "r", encoding="utf-8") as v_config_file:
-        visual_config = yaml.safe_load(v_config_file)
-
-    with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
-        cv_data = yaml.safe_load(file)
 
 
     surname_and_name = cv_data['personal_info']['name']
