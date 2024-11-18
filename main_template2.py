@@ -11,42 +11,11 @@ from reportlab.lib.colors import HexColor
 
 width, height = A4
 
-
-def draw_experience_entry(c, job, y_position, page_number):
-    y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
-                                                                visual_config['experience']['period'],
-                                                                y_position, page_number)
-
-    y_position, page_number = draw_entry_right(c, job["employer"] + " | " + job["location"],
-                                               visual_config['experience']['employer'],
-                                               y_position, page_number)
-
-    y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
-                                               y_position, page_number)
-    y_position -= visual_config['experience']['Y_delta_default']
-    if "key_achievements" in job:
-        y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['description'],
-                                                   y_position, page_number)
-        for achievement in job["key_achievements"]:
-            y_position, page_number = draw_entry_right(c, f"* {achievement}",
-                                                       visual_config['experience']['description'],
-                                                       y_position, page_number)
-
-    y_position -= visual_config['experience']['Y_delta_default']
-    if "technologies" in job:
-        technologies = "Technologies: " + ", ".join(job["technologies"])
-        y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
-                                                   y_position, page_number)
-    y_position -= visual_config['experience']['Y_delta_after_technologies']
-    return y_position, page_number
-
-def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
-    visual_config = visual_config_section['personal_data_info']
-
-    c.setFont(visual_config['font'], visual_config['font_size'])
-    c.setFillColor(HexColor(visual_config['color']))
-
-    draw_entry_left(c, personal_data, visual_config, visual_config['y_position'], page_number)
+def add_footer(c, page_num, visual_config_footer):
+    c.setFont(visual_config_footer['fonts']['default'], visual_config_footer['sizes']['small'])
+    c.setFillColor(HexColor(visual_config_footer['colors']['footer']))
+    footer_text = f"Page {page_num}"
+    c.drawString((width / 2) - 20, 30, footer_text)
 
 def split_and_keep_delimiters(s):
     pattern = r'([\s\-_])'
@@ -61,24 +30,17 @@ def split_and_keep_delimiters(s):
 
     return result
 
-def draw_courses_left(c, course, y_position, visual_setup, page_number):
-    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
-    year_text = str(course["year"])
-    course_text = f"{year_text} - {course['name']}"
-    y_position, page_number = draw_entry_left(c, course_text, visual_setup, y_position, page_number)
+def draw_entry_right_with_superscript(c, text, super_text, config, y_position, page_number):
+    # Rysowanie głównego tekstu
+    c.setFont("Arial", 12)
+    c.drawString(y_right_column_text_min, y_position, text)
 
-    return y_position, page_number
+    # Rysowanie górnego indeksu
+    c.setFont("Arial", 10)
+    x_new_position = y_right_column_text_max - c.stringWidth(super_text, "Arial", 10)
+    c.drawString(x_new_position, y_position + 5, super_text)
 
-def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
-    y_position, page_number = draw_entry_left(c, edu["school"], visual_setup['school_name'], y_position, page_number)
-    y_position, page_number = draw_entry_left(c, edu['years'], visual_setup['years'], y_position, page_number)
-    y_position, page_number = draw_entry_left(c, edu["degree"], visual_setup['degree'], y_position, page_number)
-    y_position -= visual_setup['Y_delta_after_education_entry']
-
-    return y_position, page_number
-
-def draw_entry_left(c, text, visual_setup, y_position, page_number):
-    y_position, page_number = draw_entry(c, text, visual_setup, y_left_column_text_min, y_position, page_number, "left")
+    y_position -= config['Y_delta']
     return y_position, page_number
 
 def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site):
@@ -120,30 +82,34 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
 
     return y_position, page_number
 
+
+def draw_entry_left(c, text, visual_setup, y_position, page_number):
+    y_position, page_number = draw_entry(c, text, visual_setup, y_left_column_text_min, y_position, page_number, "left")
+    return y_position, page_number
+
+
 def draw_entry_right(c, text, visual_setup, y_position, page_number):
     y_position, page_number = draw_entry(c, text, visual_setup, y_right_column_text_min, y_position, page_number, "right")
     return y_position, page_number
 
-def draw_entry_right_with_superscript(c, text, super_text, config, y_position, page_number):
-    # Rysowanie głównego tekstu
-    c.setFont("Arial", 12)
-    c.drawString(y_right_column_text_min, y_position, text)
 
-    # Rysowanie górnego indeksu
-    c.setFont("Arial", 10)
-    x_new_position = y_right_column_text_max - c.stringWidth(super_text, "Arial", 10)
-    c.drawString(x_new_position, y_position + 5, super_text)
+def create_cv(filename, cv_data_json, visual_config):
+    c = canvas.Canvas(filename, pagesize=A4)
 
-    y_position -= config['Y_delta']
-    return y_position, page_number
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'fonts/ARIAL.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'fonts/ARIALBD.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold-italic'], 'fonts/ARIALBLACKITALIC.TTF'))
+    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'fonts/ArialCEItalic.ttf'))
+    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
 
-def add_footer(c, page_num, visual_config_footer):
-    """Adds a footer with the page number."""
-    width, height = A4
-    c.setFont(visual_config_footer['fonts']['default'], visual_config_footer['sizes']['small'])
-    c.setFillColor(HexColor(visual_config_footer['colors']['footer']))
-    footer_text = f"Page {page_num}"
-    c.drawString((width / 2) - 20, 30, footer_text)
+    page_number = 1
+
+    c.setFillColor(HexColor(visual_config['colors']['text']))
+    draw_left_column(c, cv_data_json, height, page_number, visual_config)
+    draw_right_column(c, cv_data_json, height, page_number, visual_config)
+
+    c.save()
+
 
 def draw_left_column_empty(c, height, visual_config_left):
 
@@ -233,24 +199,30 @@ def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
             y_position, page_number = draw_entry_left(c, u"\u2022 " + language, visual_config_left['left_default'], y_position, page_number)
 
 
-def draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config):
-    own_projects = cv_data_json.get("own_projects", [])
 
-    visual_config_default = visual_config['right_own_project']['default']
-    visual_config_link = visual_config['right_own_project']['link']
+def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
+    visual_config = visual_config_section['personal_data_info']
 
-    if own_projects['position'] == "right":
-        y_position -= visual_config['right_own_project']['Y_delta']
-        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config['section_name'], y_position, page_number)
-        for project in own_projects["projects"]:
-            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
+    c.setFont(visual_config['font'], visual_config['font_size'])
+    c.setFillColor(HexColor(visual_config['color']))
 
-            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_link, y_position,  page_number)
-            if "technologies" in project:
-                technologies = "Technologies: " + ", ".join(project["technologies"])
-                y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
-                                                           y_position, page_number)
-            y_position -= visual_config['right_own_project']['Y_delta']
+    draw_entry_left(c, personal_data, visual_config, visual_config['y_position'], page_number)
+
+def draw_courses_left(c, course, y_position, visual_setup, page_number):
+    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
+    year_text = str(course["year"])
+    course_text = f"{year_text} - {course['name']}"
+    y_position, page_number = draw_entry_left(c, course_text, visual_setup, y_position, page_number)
+
+    return y_position, page_number
+
+def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
+    y_position, page_number = draw_entry_left(c, edu["school"], visual_setup['school_name'], y_position, page_number)
+    y_position, page_number = draw_entry_left(c, edu['years'], visual_setup['years'], y_position, page_number)
+    y_position, page_number = draw_entry_left(c, edu["degree"], visual_setup['degree'], y_position, page_number)
+    y_position -= visual_setup['Y_delta_after_education_entry']
+
+    return y_position, page_number
 
 def draw_right_column(c, cv_data_json, height, page_number, visual_config):
 
@@ -274,24 +246,55 @@ def draw_right_column(c, cv_data_json, height, page_number, visual_config):
 
     # add_footer(c, page_number, visual_config)
 
-def create_cv(filename, cv_data_json, visual_config):
-    c = canvas.Canvas(filename, pagesize=A4)
+def draw_experience_entry(c, job, y_position, page_number):
+    y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
+                                                                visual_config['experience']['period'],
+                                                                y_position, page_number)
+
+    y_position, page_number = draw_entry_right(c, job["employer"] + " | " + job["location"],
+                                               visual_config['experience']['employer'],
+                                               y_position, page_number)
+
+    y_position, page_number = draw_entry_right(c, job["description"], visual_config['experience']['description'],
+                                               y_position, page_number)
+    y_position -= visual_config['experience']['Y_delta_default']
+    if "key_achievements" in job:
+        y_position, page_number = draw_entry_right(c, "Key achievements:", visual_config['experience']['description'],
+                                                   y_position, page_number)
+        for achievement in job["key_achievements"]:
+            y_position, page_number = draw_entry_right(c, f"* {achievement}",
+                                                       visual_config['experience']['description'],
+                                                       y_position, page_number)
+
+    y_position -= visual_config['experience']['Y_delta_default']
+    if "technologies" in job:
+        technologies = "Technologies: " + ", ".join(job["technologies"])
+        y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
+                                                   y_position, page_number)
+    y_position -= visual_config['experience']['Y_delta_after_technologies']
+    return y_position, page_number
 
 
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['default'], 'fonts/ARIAL.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold'], 'fonts/ARIALBD.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['bold-italic'], 'fonts/ARIALBLACKITALIC.TTF'))
-    pdfmetrics.registerFont(TTFont(visual_config['fonts']['italic'], 'fonts/ArialCEItalic.ttf'))
-    c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
 
-    page_number = 1
+def draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config):
+    own_projects = cv_data_json.get("own_projects", [])
 
-    c.setFillColor(HexColor(visual_config['colors']['text']))
-    draw_left_column(c, cv_data_json, height, page_number, visual_config)
-    draw_right_column(c, cv_data_json, height, page_number, visual_config)
+    visual_config_default = visual_config['right_own_project']['default']
+    visual_config_link = visual_config['right_own_project']['link']
 
+    if own_projects['position'] == "right":
+        y_position -= visual_config['right_own_project']['Y_delta']
+        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config['section_name'], y_position, page_number)
+        for project in own_projects["projects"]:
+            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
 
-    c.save()
+            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_link, y_position,  page_number)
+            if "technologies" in project:
+                technologies = "Technologies: " + ", ".join(project["technologies"])
+                y_position, page_number = draw_entry_right(c, technologies, visual_config['experience']['technologies'],
+                                                           y_position, page_number)
+            y_position -= visual_config['right_own_project']['Y_delta']
+
 
 if __name__ == '__main__':
     # company="20241106_aws_developer"
