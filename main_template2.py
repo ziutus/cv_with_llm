@@ -148,7 +148,7 @@ def add_footer(c, page_num, visual_config_footer):
 def draw_left_column_empty(c, height, visual_config_left):
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(y_left_column_grey, 50, column_left_width, height - 100, stroke=0, fill=1)
+    c.rect(y_left_column_grey_top, 50, column_left_width, height - 100, stroke=0, fill=1)
 
 def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
 
@@ -164,7 +164,7 @@ def draw_left_column(c, cv_data_json, height, page_number, visual_config_left):
 
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(y_left_column_grey, y_left_column_grey_bottom, column_left_width, height - 40, stroke=0, fill=1)
+    c.rect(y_left_column_grey_top, y_left_column_grey_bottom, column_left_width, height - 40, stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
@@ -303,22 +303,22 @@ if __name__ == '__main__':
     with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
         cv_data = yaml.safe_load(file)
 
-    y_left_top_margin = 35
-    y_top_margin = 30
-    y_left_column_grey = 20
-    column_left_width = 235
-    y_left_column_text_min = 25
-    y_left_column_text_max = y_left_column_text_min + column_left_width - 10
-    y_left_column_grey_bottom = 20
+    # y_left_top_margin = visual_config['y_left_top_margin']
+    y_top_margin = visual_config['y_top_margin'] #For new page but we have 1 page CV
+    y_left_column_grey_top = visual_config['y_left_column_grey_top']
+    column_left_width = visual_config['column_left_width']
+    y_left_column_text_min = visual_config['y_left_column_text_min']
+    y_left_column_text_max = y_left_column_text_min + column_left_width - visual_config['y_left_text_right_margin']
+    y_left_column_grey_bottom = visual_config['y_left_column_grey_bottom']
 
-    y_left_column_space_headers = 8
+    y_left_column_space_headers = visual_config['y_left_column_space_headers']
 
-    y_right_column_text_top_margin = 35
+    y_right_column_text_top_margin = visual_config['y_right_column_text_top_margin']
 
-    y_right_column_text_min = 270
-    y_right_column_text_max = 580
+    y_right_column_text_min = visual_config['y_right_column_text_min']
+    y_right_column_text_max = visual_config['y_right_column_text_max']
 
-    y_bottom_margin = 20
+    y_bottom_margin = visual_config['y_bottom_margin']
 
 
     surname_and_name = cv_data['personal_info']['name']
