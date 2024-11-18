@@ -184,11 +184,14 @@ personal_data_info:
     y_position: 80
     Y_delta: 10
 
-y_left_column_grey_top: 20
+x_left_column_grey_top: 20
 y_top_margin: 30
 
 y_left_top_margin: 35
+y_left_top_text_margin: 40
 column_left_width: 235
+column_left_high_minus: 40
+
 y_left_text_right_margin: 10
 
 y_left_column_text_min: 25
