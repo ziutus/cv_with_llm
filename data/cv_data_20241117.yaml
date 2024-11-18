@@ -1,0 +1,192 @@
+personal_info:
+  name: "Krzysztof Józwiak"
+  email: "krzysztof@itsnap.eu"
+  phone: "+48 790 579 537"
+
+top_skills:
+  - "AWS (Lambda, API Gateway, DynamoDB)"
+  - Python
+  - "Serverless Architecture"
+  - Docker + Kubernetes
+  - CI/CD
+
+tools:
+  - AWS Lambda
+  - API Gateway
+  - DynamoDB
+  - RDS
+  - Docker
+  - Jenkins
+  - GitLab CI
+  - CloudWatch
+  - Terraform + Helm
+  - ServiceNow
+  - Jira, Confluence
+  - Brinqa
+  - PyCharm
+
+languages:
+  - English
+  - Polish
+
+education:
+  - school: University of Social Science
+    degree: Postgraduate studies - Linux Cloud Academy
+    field_of_study: Linux Cloud Academy
+    years: 2015 - 2015
+  - school: The Academy of Information Technology
+    degree: Master's Degree - Information Technology
+    field_of_study: Information Technology
+    years: 2008 - 2010
+  - school: The University of Humanities and Economics in Lodz
+    degree: Bachelor's Degree - Information Technology
+    field_of_study: Information Technology
+    years: 2003 - 2008
+
+courses:
+  - year: 2024
+    name: "Secure Code Academy"
+#  - year: 2023
+#    name: "Testing Serverless Architectures (Pro) - Yan Cui"
+#    relevance: "Directly relevant to AWS serverless architecture"
+#  - year: 2023
+#    name: "Production-Ready Serverless (Apr 2023) - Yan Cui"
+#    relevance: "Core serverless development skills"
+  - year: 2023
+    name: "AI Devs 2 - Connect GPT-4 with application and automation logic"
+  - year: 2022
+    name: "AI Devs - Programming in pair with AI"
+  - year: 2021
+    name: "AppSync Masterclass premium - Yan Cui"
+  - year: 2020
+    name: "Data Lake. Data Analysis in AWS Cloud"
+  - year: 2019
+    name: "Web Application Security Testing"
+  - year: 2019
+    name: "Serverless – od zera do bohatera"
+#    link: "https://akademia.serverlesspolska.pl/szkolenie-serverless/"
+  - year: 2019
+    name: "CloudSchool - AWS Certified Developer - Associate"
+
+certificates:
+  - AWS Certified SysOps Administrator – Associate
+  - AWS Certified Solutions Architect – Associate
+  - AI Devs 2 - Connect GPT-4 with application and automation logic
+
+links:
+  - name: LinkedIn
+    link: https://www.linkedin.com/in/krzysztof-jozwiak-sre-with-ai-skills/
+    link_to_show: www.linkedin.com/in/krzysztof-jozwiak-sre-with-ai-skills/
+  - name: Portfolio
+    link: https://github.com/ziutus/
+    link_to_show: www.github.com/ziutus/
+
+experience:
+  - employer: "Transition Technologies PSC"
+    position: "DevOps Engineer"
+    period: "March 2024 - Present"
+    location: "Lodz"
+    description: |
+      Managing and optimizing automation and infrastructure processes to enhance developer experience and streamline data workflows. 
+      Focus on process automation, infrastructure management, and efficient pipeline development for robust data handling.
+    key_achievements:
+      - Developed Python-based automation scripts for infrastructure monitoring and process efficiency
+      - Managed and maintained infrastructure as code (IaC) to ensure scalability and reliability
+    technologies:
+      - "AWS (Lambda, API Gateway, EC2, RDS, ECS, StepFunction, CloudFormation)"
+      - Python
+      - Docker
+      - GitLab
+
+  - employer: "Philip Morris International (Contractor)"
+    position: "Site Reliability Engineer (SRE)"
+    period: "Nov 2021 - Jul 2024"
+    location: "Remote / Cracow"
+    description: |
+      Led the implementation and maintenance of CI/CD pipelines and automated deployment processes,
+      focusing on system reliability and cost optimization. Supporting developers team which created Java application.
+    key_achievements:
+      - "Designing and implementing serverless solutions using AWS Lambda and API Gateway"
+      - "Achieving pipeline availability of 99.23% and overall service availability of 99.95%"
+      - "Reducing annual application costs by 50%"
+      - "Managing databases in AWS environment (RDS)"
+      - "Implementing and maintaining CI/CD pipeline using Jenkins"
+      - "Monitoring applications using CloudWatch, ELK (ElasticSearch, LogStach, Kibana)"
+      - "Integrating with AWS Cognito and AAD services"
+    technologies:
+      - Kubernetes
+      - "AWS (EKS, Lambda, API Gateway, CloudFront, Glue, Cognito)"
+      - Python
+      - Jenkins CloudBeans
+      - Terraform Enterprise
+      - React
+
+  - employer: "Citi Bank International"
+    position: "Senior AIX / Unix Administrator "
+    period: "Jan 2012 - Nov 2021"
+    location: "Lodz & Warsaw"
+    technologies:
+      - AIX (Unix)
+      - Perl
+      - Ruby
+      - SAN Storage
+      - Splunk
+      - Ansible Tower
+      - Splunk
+    description: |
+      Managed large-scale infrastructure automation and monitoring implementation for global operations.
+      Led integration of modern CI/CD practices into traditional infrastructure (AIX part).
+    key_achievements:
+      - Implemented Ansible Tower for infrastructure automation
+      - Developed comprehensive monitoring using Splunk
+      - Created automated validation and deployment scripts
+
+  - employer: "IBM Czech Republic"
+    position: "Senior Unix Administrator"
+    period: "Feb 2007 - Dec 2012"
+    location: "Brno - Czech Republic"
+    technologies:
+      - AIX (Unix)
+      - Linux
+      - Perl
+      - SAN storage
+    description: |
+      Supporting AIX and Linux large environment. Writing Perl scripts for automatize of typical administration tasks. Creating Linux packages pachtes for whole German IBM Linux account. 
+
+
+own_projects:
+  position: right
+  projects:
+  - link_to_show: https://github.com/ziutus/cv_with_llm
+    name: Easy CV - Customize your CV using LLM
+    technologies:
+      - Python
+      - LLM
+      - yaml
+    time: "2024 - now"
+  - link_to_show: https://github.com/ziutus/ai_assistant_lenie_server
+    name: Lenie AI - LLM based assistance
+    technologies:
+      - RDS
+      - API Gateway
+      - Lambda
+      - DynamoDB
+      - React
+      - Docker
+      - Python
+      - GitLab
+    time: "2023 - now"
+  - link_to_show: www.odkrywca.eu/
+    name: Odkrywca - Travel APP
+    technologies:
+      - DynamoDB
+      - API Gateway
+      - Lambda
+      - Ionic (Angular) -> Flutter
+    time: "2018 - 2021"
+
+
+personal_data_info: | 
+    I hereby give consent for my personal data to be processed for the purposes of recruitment, in accordance with the Personal 
+    Data Protection Act dated 29.08.1997 (uniform text: Journal of Laws of the Republic of Poland 2002 No 101, item 926 with 
+    further amendments)
