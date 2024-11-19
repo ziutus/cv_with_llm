@@ -184,6 +184,13 @@ personal_data_info:
     y_position: 80
     Y_delta: 10
 
+own_generate_info:
+    font: 'Arial'
+    font_size: 10
+    color: '#A9A9A9'
+    y_position: 30
+    Y_delta: 10
+
 x_left_column_grey_top: 20
 y_top_margin: 30
 
