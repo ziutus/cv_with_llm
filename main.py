@@ -34,11 +34,9 @@ def split_and_keep_delimiters(s):
 
 
 def draw_entry_right_with_superscript(c, text, super_text, config, y_position, page_number):
-    # Rysowanie głównego tekstu
     c.setFont("Arial", 12)
     c.drawString(y_right_column_text_min, y_position, text)
 
-    # Rysowanie górnego indeksu
     c.setFont("Arial", 10)
     x_new_position = y_right_column_text_max - c.stringWidth(super_text, "Arial", 10)
     c.drawString(x_new_position, y_position + 5, super_text)
@@ -63,10 +61,7 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
     line = ""
     for word in text_words:
         line_length = c.stringWidth(line, visual_setup['font'], visual_setup['font_size']) + c.stringWidth(word[0],
-                                                                                                           visual_setup[
-                                                                                                               'font'],
-                                                                                                           visual_setup[
-                                                                                                               'font_size'])
+                                     visual_setup['font'], visual_setup['font_size'])
         if line_length <= y_length_allowed:
             line += word[0] + word[1]
         else:
