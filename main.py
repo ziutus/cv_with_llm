@@ -11,11 +11,13 @@ from reportlab.lib.colors import HexColor
 
 width, height = A4
 
+
 def add_footer(c, page_num, visual_config_footer):
     c.setFont(visual_config_footer['fonts']['default'], visual_config_footer['sizes']['small'])
     c.setFillColor(HexColor(visual_config_footer['colors']['footer']))
     footer_text = f"Page {page_num}"
     c.drawString((width / 2) - 20, 30, footer_text)
+
 
 def split_and_keep_delimiters(s):
     pattern = r'([\s\-_])'
@@ -30,6 +32,7 @@ def split_and_keep_delimiters(s):
 
     return result
 
+
 def draw_entry_right_with_superscript(c, text, super_text, config, y_position, page_number):
     # Rysowanie głównego tekstu
     c.setFont("Arial", 12)
@@ -42,6 +45,7 @@ def draw_entry_right_with_superscript(c, text, super_text, config, y_position, p
 
     y_position -= config['Y_delta']
     return y_position, page_number
+
 
 def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site):
     text = text.replace('\n', '')
@@ -58,7 +62,11 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
     text_lines = []
     line = ""
     for word in text_words:
-        line_length = c.stringWidth(line, visual_setup['font'], visual_setup['font_size']) + c.stringWidth(word[0], visual_setup['font'], visual_setup['font_size'])
+        line_length = c.stringWidth(line, visual_setup['font'], visual_setup['font_size']) + c.stringWidth(word[0],
+                                                                                                           visual_setup[
+                                                                                                               'font'],
+                                                                                                           visual_setup[
+                                                                                                               'font_size'])
         if line_length <= y_length_allowed:
             line += word[0] + word[1]
         else:
@@ -89,7 +97,8 @@ def draw_entry_left(c, text, visual_setup, y_position, page_number):
 
 
 def draw_entry_right(c, text, visual_setup, y_position, page_number):
-    y_position, page_number = draw_entry(c, text, visual_setup, y_right_column_text_min, y_position, page_number, "right")
+    y_position, page_number = draw_entry(c, text, visual_setup, y_right_column_text_min, y_position, page_number,
+                                         "right")
     return y_position, page_number
 
 
@@ -112,12 +121,12 @@ def create_cv(filename, cv_data_json, visual_config_cv):
 
 
 def draw_left_column_empty(c, high, visual_config_left):
-
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(x_left_column_grey_top, y_left_column_grey_bottom, column_left_width, high - column_left_high_minus, stroke=0, fill=1)
+    c.rect(x_left_column_grey_top, y_left_column_grey_bottom, column_left_width, high - column_left_high_minus,
+           stroke=0, fill=1)
+
 
 def draw_left_column(c, cv_data_json, high, page_number, visual_config_left):
-
     personal_info = cv_data_json.get("personal_info", {})
     top_skills = cv_data_json.get("top_skills", [])
     tools = cv_data_json.get("tools", [])
@@ -129,17 +138,20 @@ def draw_left_column(c, cv_data_json, high, page_number, visual_config_left):
     links = cv_data_json.get("links", [])
 
     c.setFillColor(HexColor(visual_config_left['colors']['grey_background']))
-    c.rect(x_left_column_grey_top, y_left_column_grey_bottom, column_left_width, high - column_left_high_minus, stroke=0, fill=1)
+    c.rect(x_left_column_grey_top, y_left_column_grey_bottom, column_left_width, high - column_left_high_minus,
+           stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(visual_config_left['colors']['highlight']))
 
         y_position = high - y_left_top_text_margin
 
-        y_position, page_number = draw_entry_left(c, f"{personal_info['name']}", visual_config_left['left_name_surname'], y_position, page_number)
-        y_position, page_number = draw_entry_left(c, f"Email: {personal_info['email']}", visual_config_left['left_email_phone'], y_position, page_number)
-        y_position, page_number = draw_entry_left(c, f"Phone: {personal_info['phone']}", visual_config_left['left_email_phone'], y_position, page_number)
-        # y_position -= y_left_column_space_headers
+        y_position, page_number = draw_entry_left(c, f"{personal_info['name']}",
+                                                  visual_config_left['left_name_surname'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Email: {personal_info['email']}",
+                                                  visual_config_left['left_email_phone'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Phone: {personal_info['phone']}",
+                                                  visual_config_left['left_email_phone'], y_position, page_number)
 
         c.setFont(visual_config_left['fonts']['default'], visual_config_left['sizes']['small'])
         for link in links:
@@ -149,54 +161,62 @@ def draw_left_column(c, cv_data_json, high, page_number, visual_config_left):
 
             y_position, page_number = draw_entry_left(c, full_link_text, visual_config_left['left_default'], y_position,
                                                       page_number)
-
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Top Skills", visual_config_left['left_section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Top Skills", visual_config_left['left_section_name'], y_position,
+                                                  page_number)
 
         for skill in top_skills:
-            y_position, page_number = draw_entry_left(c,  u"\u2022 " + skill, visual_config_left['left_default'],
+            y_position, page_number = draw_entry_left(c, u"\u2022 " + skill, visual_config_left['left_default'],
                                                       y_position, page_number)
 
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Tools", visual_config_left['left_section_name'], y_position, page_number)
-        y_position, page_number = draw_entry_left(c, ", ".join(tools), visual_config_left['left_default'], y_position, page_number)
-
+        y_position, page_number = draw_entry_left(c, f"Tools", visual_config_left['left_section_name'], y_position,
+                                                  page_number)
+        y_position, page_number = draw_entry_left(c, ", ".join(tools), visual_config_left['left_default'], y_position,
+                                                  page_number)
 
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Certificates", visual_config_left['left_section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Certificates", visual_config_left['left_section_name'],
+                                                  y_position, page_number)
         for certificate in certificates:
-            y_position, page_number = draw_entry_left(c, u"\u2022 " + certificate, visual_config_left['left_default'], y_position, page_number)
-
+            y_position, page_number = draw_entry_left(c, u"\u2022 " + certificate, visual_config_left['left_default'],
+                                                      y_position, page_number)
 
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Education", visual_config_left['left_section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Education", visual_config_left['left_section_name'], y_position,
+                                                  page_number)
         for edu in education:
-            y_position, page_number = draw_education_entry_left(c, edu, y_position, visual_config['education'], page_number)
+            y_position, page_number = draw_education_entry_left(c, edu, y_position, visual_config['education'],
+                                                                page_number)
 
         if own_projects['position'] == "left":
             y_position -= y_left_column_space_headers
-            y_position, page_number = draw_entry_left(c, f"Own projects", visual_config_left['left_section_name'], y_position, page_number)
+            y_position, page_number = draw_entry_left(c, f"Own projects", visual_config_left['left_section_name'],
+                                                      y_position, page_number)
             for project in own_projects["projects"]:
-                y_position, page_number = draw_entry_left(c, u"\u2022 " +  project["time"], visual_config_left['left_default'], y_position,  page_number)
+                y_position, page_number = draw_entry_left(c, u"\u2022 " + project["time"],
+                                                          visual_config_left['left_default'], y_position, page_number)
                 if "technologies" in project:
                     technologies = project["name"] + " (" + " ,".join(project["technologies"]) + ")"
                     y_position, page_number = draw_entry_left(c, technologies,
-                                                               visual_config_left['left_default'],
-                                                               y_position, page_number)
+                                                              visual_config_left['left_default'],
+                                                              y_position, page_number)
 
-                y_position, page_number = draw_entry_left(c, project["link_to_show"], visual_config_left['left_default'], y_position,  page_number)
-
+                y_position, page_number = draw_entry_left(c, project["link_to_show"],
+                                                          visual_config_left['left_default'], y_position, page_number)
 
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Courses", visual_config_left['left_section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Courses", visual_config_left['left_section_name'], y_position,
+                                                  page_number)
         for course in courses:
             y_position, page_number = draw_courses_left(c, course, y_position, visual_config['courses'], page_number)
 
         y_position -= y_left_column_space_headers
-        y_position, page_number = draw_entry_left(c, f"Languages", visual_config_left['left_section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_left(c, f"Languages", visual_config_left['left_section_name'], y_position,
+                                                  page_number)
         for language in languages:
-            y_position, page_number = draw_entry_left(c, u"\u2022 " + language, visual_config_left['left_default'], y_position, page_number)
-
+            y_position, page_number = draw_entry_left(c, u"\u2022 " + language, visual_config_left['left_default'],
+                                                      y_position, page_number)
 
 
 def draw_personal_data_info(c, personal_data, visual_config_section, page_number):
@@ -207,6 +227,7 @@ def draw_personal_data_info(c, personal_data, visual_config_section, page_number
 
     draw_entry_left(c, personal_data, visual_config_personal, visual_config_personal['y_position'], page_number)
 
+
 def draw_courses_left(c, course, y_position, visual_setup, page_number):
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
     year_text = str(course["year"])
@@ -214,6 +235,7 @@ def draw_courses_left(c, course, y_position, visual_setup, page_number):
     y_position, page_number = draw_entry_left(c, course_text, visual_setup, y_position, page_number)
 
     return y_position, page_number
+
 
 def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
     y_position, page_number = draw_entry_left(c, edu["school"], visual_setup['school_name'], y_position, page_number)
@@ -223,8 +245,8 @@ def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
 
     return y_position, page_number
 
-def draw_right_column(c, cv_data_json, high, page_number, visual_config_right):
 
+def draw_right_column(c, cv_data_json, high, page_number, visual_config_right):
     experience = cv_data_json.get("experience", [])
     personal_data_info = cv_data_json.get("personal_data_info", "")
 
@@ -243,7 +265,6 @@ def draw_right_column(c, cv_data_json, high, page_number, visual_config_right):
 
     draw_personal_data_info(c, personal_data_info, visual_config_right, page_number)
 
-    # add_footer(c, page_number, visual_config)
 
 def draw_experience_entry(c, job, y_position, page_number):
     y_position, page_number = draw_entry_right_with_superscript(c, job["position"], job["period"],
@@ -274,7 +295,6 @@ def draw_experience_entry(c, job, y_position, page_number):
     return y_position, page_number
 
 
-
 def draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config_projects):
     own_projects = cv_data_json.get("own_projects", [])
 
@@ -283,30 +303,40 @@ def draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_
 
     if own_projects['position'] == "right":
         y_position -= visual_config_projects['right_own_project']['Y_delta']
-        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config_projects['section_name'], y_position, page_number)
+        y_position, page_number = draw_entry_right(c, f"Own projects", visual_config_projects['section_name'],
+                                                   y_position, page_number)
         for project in own_projects["projects"]:
-            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"], visual_config_default, y_position, page_number)
+            y_position, page_number = draw_entry_right_with_superscript(c, project["name"], project["time"],
+                                                                        visual_config_default, y_position, page_number)
 
-            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_link, y_position,  page_number)
+            y_position, page_number = draw_entry_right(c, project["link_to_show"], visual_config_link, y_position,
+                                                       page_number)
             if "technologies" in project:
                 technologies = "Technologies: " + ", ".join(project["technologies"])
-                y_position, page_number = draw_entry_right(c, technologies, visual_config_projects['experience']['technologies'],
+                y_position, page_number = draw_entry_right(c, technologies,
+                                                           visual_config_projects['experience']['technologies'],
                                                            y_position, page_number)
             y_position -= visual_config_projects['right_own_project']['Y_delta']
 
 
 if __name__ == '__main__':
-    # company="20241106_aws_developer"
-    company="20241117"
+    import argparse
 
-    with open("data/cv_visual_config_template2_2.yaml", "r", encoding="utf-8") as v_config_file:
+    parser = argparse.ArgumentParser(description='Generate CV PDF from YAML data.')
+    parser.add_argument('company', type=str, help='The company identifier for the CV data file.')
+    parser.add_argument('--config', type=str, default="data/cv_visual_config.yaml",
+                        help='The visual configuration YAML file.')
+    args = parser.parse_args()
+
+    company = args.company
+
+    with open(args.config, "r", encoding="utf-8") as v_config_file:
         visual_config = yaml.safe_load(v_config_file)
 
     with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
         cv_data = yaml.safe_load(file)
 
-    # y_left_top_margin = visual_config['y_left_top_margin']
-    y_top_margin = visual_config['y_top_margin'] #For new page but we have 1 page CV
+    y_top_margin = visual_config['y_top_margin']  # For new page but we have 1 page CV
     y_left_top_text_margin = visual_config['y_left_top_text_margin']
     x_left_column_grey_top = visual_config['x_left_column_grey_top']
     column_left_width = visual_config['column_left_width']
@@ -323,7 +353,6 @@ if __name__ == '__main__':
     y_right_column_text_max = visual_config['y_right_column_text_max']
 
     y_bottom_margin = visual_config['y_bottom_margin']
-
 
     surname_and_name = cv_data['personal_info']['name']
     pdf_filename = f"output/{unidecode.unidecode(surname_and_name).replace(' ', '_')}_{company}.pdf"
