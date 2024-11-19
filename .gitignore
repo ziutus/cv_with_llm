@@ -1,5 +1,6 @@
-/*.pdf
+*.pdf
 .venv
 .idea
-/photo.jpg
-/round_photo.png
+/fonts/*
+/data/cv_data_*.yaml
+/data/cv_data_all.yaml
