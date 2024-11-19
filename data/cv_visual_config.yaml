@@ -9,7 +9,8 @@ section_name:
 fonts:
   default: 'Arial'
   bold: 'Arial-Bold'
-  italic: 'Arial-Oblique'
+  bold-italic: 'Arial-Oblique'
+  italic: 'Arial-italic'
 
 sizes:
   subtitle: 14
@@ -59,17 +60,23 @@ left_default:
     color: '#000000'
 
 right_own_project:
-  Y_top_margin: 4
-  Y_margin: 3
-  Y_delta: 10
+  Y_top_margin: 0
+  Y_margin: 2
+  Y_delta: 5
 
-personal_data_info:
-  width: 60  # Ustalenie szerokości zawijania tekstu dla personal_data_info
-  font: 'Arial'  # Czcionka dla personal_data_info
-  font_size: 10  # Rozmiar czcionki dla personal_data_info
-  color: '#FF0000'  # Kolor czcionki dla personal_data_info
-  y_position: 90
-  Y_delta: 13
+  default:
+    width: 20
+    font: 'Arial'
+    font_size: 10
+    Y_delta: 10
+    color: '#000000'
+
+  link:
+    font: 'Arial-italic'
+    font_size: 9
+    Y_delta: 11
+    color: '#000000'
+
 
 name_and_surname:
   y_top_minus: 70
@@ -135,15 +142,6 @@ experience:
     Y_delta: 11
     color: '#000000'
 
-linkedin_more_info:
-  text: "More information about my experience on my LinkedIn profile:"
-  y_position: 60
-  font: 'Arial'
-  font_size: 8
-  width: 80
-  color: '#0000FF'
-  Y_delta: 12
-
 courses:
   width: 42
   font: 'Arial'
@@ -161,20 +159,49 @@ education:
     width: 40
     font: 'Arial-Bold'
     font_size: 10
-    Y_delta: 14
+    Y_delta: 12
     color: '#000000'
   degree:
     width: 40
     font: 'Arial'
     font_size: 10
-    Y_delta: 14
+    Y_delta: 12
     color: '#000000'
   years:
     width: 40
     font: 'Arial'
     font_size: 10
-    Y_delta: 14
+    Y_delta: 12
     color: '#000000'
 
   degree_font_size: 12
   Y_delta_after_entry: 20
+
+personal_data_info:
+    font: 'Arial'
+    font_size: 10
+    color: '#FF0000'
+    y_position: 80
+    Y_delta: 10
+
+x_left_column_grey_top: 20
+y_top_margin: 30
+
+y_left_top_margin: 35
+y_left_top_text_margin: 40
+column_left_width: 235
+column_left_high_minus: 40
+
+y_left_text_right_margin: 10
+
+y_left_column_text_min: 25
+y_left_column_grey_bottom: 20
+
+y_left_column_space_headers: 8
+
+y_right_column_text_top_margin: 35
+
+y_right_column_text_min: 270
+y_right_column_text_max: 580
+
+y_bottom_margin: 20
