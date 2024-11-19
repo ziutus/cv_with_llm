@@ -45,7 +45,7 @@ def draw_entry_right_with_superscript(c, text, super_text, config, y_position, p
     return y_position, page_number
 
 
-def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site):
+def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site, ignore_new_site = False):
     text = text.replace('\n', '')
     text_words = split_and_keep_delimiters(text)
 
@@ -76,7 +76,7 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
         c.drawString(x_position, y_position, line)
         y_position -= visual_setup['Y_delta']
 
-        if y_position < y_bottom_margin:
+        if not ignore_new_site and y_position < y_bottom_margin:
             add_footer(c, page_number, visual_config)
             c.showPage()
             page_number += 1
@@ -86,14 +86,15 @@ def draw_entry(c, text, visual_setup, x_position, y_position, page_number, site)
     return y_position, page_number
 
 
-def draw_entry_left(c, text, visual_setup, y_position, page_number):
-    y_position, page_number = draw_entry(c, text, visual_setup, y_left_column_text_min, y_position, page_number, "left")
+def draw_entry_left(c, text, visual_setup, y_position, page_number, ignore_new_site = False):
+    y_position, page_number = draw_entry(c, text, visual_setup, y_left_column_text_min, y_position, page_number,
+                                         "left", ignore_new_site)
     return y_position, page_number
 
 
-def draw_entry_right(c, text, visual_setup, y_position, page_number):
+def draw_entry_right(c, text, visual_setup, y_position, page_number, ignore_new_site = False):
     y_position, page_number = draw_entry(c, text, visual_setup, y_right_column_text_min, y_position, page_number,
-                                         "right")
+                                         "right", ignore_new_site)
     return y_position, page_number
 
 
@@ -222,6 +223,13 @@ def draw_personal_data_info(c, personal_data, visual_config_section, page_number
 
     draw_entry_left(c, personal_data, visual_config_personal, visual_config_personal['y_position'], page_number)
 
+def draw_own_generate_info(c, personal_data, visual_config_section, page_number):
+    visual_config_personal = visual_config_section['own_generate_info']
+
+    c.setFont(visual_config_personal['font'], visual_config_personal['font_size'])
+    c.setFillColor(HexColor(visual_config_personal['color']))
+
+    draw_entry_right(c, personal_data, visual_config_personal, visual_config_personal['y_position'], page_number, True)
 
 def draw_courses_left(c, course, y_position, visual_setup, page_number):
     c.setFont(visual_config['fonts']['default'], visual_config['sizes']['normal'])
@@ -244,6 +252,7 @@ def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
 def draw_right_column(c, cv_data_json, high, page_number, visual_config_right):
     experience = cv_data_json.get("experience", [])
     personal_data_info = cv_data_json.get("personal_data_info", "")
+    own_generate_info = cv_data_json.get("own_generate_info", "")
 
     y_position = high - y_right_column_text_top_margin
 
@@ -259,6 +268,7 @@ def draw_right_column(c, cv_data_json, high, page_number, visual_config_right):
     draw_right_column_projects(c, cv_data_json, y_position, page_number, visual_config_right)
 
     draw_personal_data_info(c, personal_data_info, visual_config_right, page_number)
+    draw_own_generate_info(c, own_generate_info, visual_config_right, page_number)
 
 
 def draw_experience_entry(c, job, y_position, page_number):
