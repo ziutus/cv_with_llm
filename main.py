@@ -361,12 +361,18 @@ if __name__ == '__main__':
 
     surname_and_name = cv_data['personal_info']['name']
     pdf_filename = f"output/{unidecode.unidecode(surname_and_name).replace(' ', '_')}_{company}.pdf"
+    pdf_filename_base = f"output/{unidecode.unidecode(surname_and_name).replace(' ', '_')}.pdf"
+
 
     if os.path.isfile(pdf_filename):
         os.remove(pdf_filename)
         print(f"The Old {pdf_filename} has been removed.")
+    if os.path.isfile(pdf_filename_base):
+        os.remove(pdf_filename_base)
+        print(f"The Old {pdf_filename_base} has been removed.")
 
     create_cv(pdf_filename, cv_data, visual_config)
+    create_cv(pdf_filename_base, cv_data, visual_config)
 
     if os.path.isfile(pdf_filename):
         print(f"The new {pdf_filename} has been generated.")
