@@ -243,7 +243,7 @@ def draw_courses_left(c, course, y_position, visual_setup, page_number):
 def draw_education_entry_left(c, edu, y_position, visual_setup, page_number):
     y_position, page_number = draw_entry_left(c, edu["school"], visual_setup['school_name'], y_position, page_number)
     y_position, page_number = draw_entry_left(c, edu['years'], visual_setup['years'], y_position, page_number)
-    y_position, page_number = draw_entry_left(c, edu["degree"], visual_setup['degree'], y_position, page_number)
+    y_position, page_number = draw_entry_left(c, edu["degree"] + ': ' + edu["field_of_study"], visual_setup['degree'], y_position, page_number)
     y_position -= visual_setup['Y_delta_after_education_entry']
 
     return y_position, page_number
