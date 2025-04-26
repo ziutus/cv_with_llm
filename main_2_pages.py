@@ -18,7 +18,7 @@ def page_add(c, page_number):
     add_footer(c, page_number)
     c.showPage()
     page_number += 1
-    draw_left_column_empty(c, HEIGHT)
+    draw_left_column_empty(c)
     y_position = HEIGHT - VISUAL_CONFIG['y_top_margin']
 
     return y_position, page_number
@@ -117,19 +117,19 @@ def create_cv(filename, cv_data_json):
     page_number = 1
 
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['text']))
-    draw_left_column(c, cv_data_json, HEIGHT, page_number)
-    draw_right_column(c, cv_data_json, HEIGHT, page_number)
+    draw_left_column(c, cv_data_json, page_number)
+    draw_right_column(c, cv_data_json, page_number)
 
     c.save()
 
 
-def draw_left_column_empty(c, high):
+def draw_left_column_empty(c):
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['grey_background']))
-    c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], high - VISUAL_CONFIG['column_left_high_minus'],
+    c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], HEIGHT - VISUAL_CONFIG['column_left_high_minus'],
            stroke=0, fill=1)
 
 
-def draw_left_column(c, cv_data_json, high, page_number):
+def draw_left_column(c, cv_data_json, page_number):
     personal_info = cv_data_json.get("personal_info", {})
     top_skills = cv_data_json.get("top_skills", [])
     tools = cv_data_json.get("tools", [])
@@ -141,13 +141,13 @@ def draw_left_column(c, cv_data_json, high, page_number):
     links = cv_data_json.get("links", [])
 
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['grey_background']))
-    c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], high - VISUAL_CONFIG['column_left_high_minus'],
+    c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], HEIGHT - VISUAL_CONFIG['column_left_high_minus'],
            stroke=0, fill=1)
 
     if page_number == 1:
         c.setFillColor(HexColor(VISUAL_CONFIG['colors']['highlight']))
 
-        y_position = high - VISUAL_CONFIG['y_left_top_text_margin']
+        y_position = HEIGHT - VISUAL_CONFIG['y_left_top_text_margin']
 
         y_position, page_number = draw_entry_left(c, f"{personal_info['name']}",
                                                   VISUAL_CONFIG['left_name_surname'], y_position, page_number)
@@ -253,12 +253,12 @@ def draw_education_entry_left(c, edu, y_position, page_number):
     return y_position, page_number
 
 
-def draw_right_column(c, cv_data_json, high, page_number):
+def draw_right_column(c, cv_data_json, page_number):
     experience = cv_data_json.get("experience", [])
     personal_data_info = cv_data_json.get("personal_data_info", "")
     own_generate_info = cv_data_json.get("own_generate_info", "")
 
-    y_position = high - VISUAL_CONFIG['y_right_column_text_top_margin']
+    y_position = HEIGHT - VISUAL_CONFIG['y_right_column_text_top_margin']
 
     y_position, page_number = draw_entry_right(c, "Work Experience", VISUAL_CONFIG['section_name'],
                                                y_position, page_number)
