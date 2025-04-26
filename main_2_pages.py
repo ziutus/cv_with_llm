@@ -105,7 +105,7 @@ def draw_entry_right(c, text, visual_setup, y_position, page_number, ignore_new_
     return y_position, page_number
 
 
-def create_cv(filename, cv_data_json):
+def create_cv(filename):
     c = canvas.Canvas(filename, pagesize=A4)
 
     pdfmetrics.registerFont(TTFont(VISUAL_CONFIG['fonts']['default'], 'fonts/ARIAL.TTF'))
@@ -117,8 +117,8 @@ def create_cv(filename, cv_data_json):
     page_number = 1
 
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['text']))
-    draw_left_column(c, cv_data_json, page_number)
-    draw_right_column(c, cv_data_json, page_number)
+    draw_left_column(c, page_number)
+    draw_right_column(c, page_number)
 
     c.save()
 
@@ -129,16 +129,16 @@ def draw_left_column_empty(c):
            stroke=0, fill=1)
 
 
-def draw_left_column(c, cv_data_json, page_number):
-    personal_info = cv_data_json.get("personal_info", {})
-    top_skills = cv_data_json.get("top_skills", [])
-    tools = cv_data_json.get("tools", [])
-    education = cv_data_json.get("education", [])
-    certificates = cv_data_json.get("certificates", [])
-    own_projects = cv_data_json.get("own_projects", [])
-    courses = cv_data_json.get("courses", [])
-    languages = cv_data_json.get("languages", [])
-    links = cv_data_json.get("links", [])
+def draw_left_column(c, page_number):
+    personal_info = CV_DATA.get("personal_info", {})
+    top_skills = CV_DATA.get("top_skills", [])
+    tools = CV_DATA.get("tools", [])
+    education = CV_DATA.get("education", [])
+    certificates = CV_DATA.get("certificates", [])
+    own_projects = CV_DATA.get("own_projects", [])
+    courses = CV_DATA.get("courses", [])
+    languages = CV_DATA.get("languages", [])
+    links = CV_DATA.get("links", [])
 
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['grey_background']))
     c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], HEIGHT - VISUAL_CONFIG['column_left_high_minus'],
@@ -223,17 +223,19 @@ def draw_left_column(c, cv_data_json, page_number):
 
 
 
-def draw_personal_data_info(c, personal_data, page_number):
+def draw_personal_data_info(c, page_number):
+    personal_data_info = CV_DATA.get("personal_data_info", "")
     c.setFont(VISUAL_CONFIG['personal_data_info']['font'], VISUAL_CONFIG['personal_data_info']['font_size'])
     c.setFillColor(HexColor(VISUAL_CONFIG['personal_data_info']['color']))
 
-    draw_entry_left(c, personal_data, VISUAL_CONFIG['personal_data_info'], VISUAL_CONFIG['personal_data_info']['y_position'], page_number)
+    draw_entry_left(c, personal_data_info, VISUAL_CONFIG['personal_data_info'], VISUAL_CONFIG['personal_data_info']['y_position'], page_number)
 
-def draw_own_generate_info(c, personal_data, page_number):
+def draw_own_generate_info(c, page_number):
+    own_generate_info = CV_DATA.get("own_generate_info", "")
     c.setFont(VISUAL_CONFIG['own_generate_info']['font'], VISUAL_CONFIG['own_generate_info']['font_size'])
     c.setFillColor(HexColor(VISUAL_CONFIG['own_generate_info']['color']))
 
-    draw_entry_right(c, personal_data, VISUAL_CONFIG['own_generate_info'], VISUAL_CONFIG['own_generate_info']['y_position'], page_number, True)
+    draw_entry_right(c, own_generate_info, VISUAL_CONFIG['own_generate_info'], VISUAL_CONFIG['own_generate_info']['y_position'], page_number, True)
 
 def draw_courses_left(c, course, y_position, page_number):
     c.setFont(VISUAL_CONFIG['fonts']['default'], VISUAL_CONFIG['sizes']['normal'])
@@ -253,10 +255,10 @@ def draw_education_entry_left(c, edu, y_position, page_number):
     return y_position, page_number
 
 
-def draw_right_column(c, cv_data_json, page_number):
-    experience = cv_data_json.get("experience", [])
-    personal_data_info = cv_data_json.get("personal_data_info", "")
-    own_generate_info = cv_data_json.get("own_generate_info", "")
+def draw_right_column(c, page_number):
+    experience = CV_DATA.get("experience", [])
+
+
 
     y_position = HEIGHT - VISUAL_CONFIG['y_right_column_text_top_margin']
 
@@ -273,10 +275,10 @@ def draw_right_column(c, cv_data_json, page_number):
         y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
         y_position -= VISUAL_CONFIG['right_own_project']['Y_margin']
 
-    draw_right_column_projects(c, cv_data_json, y_position, page_number)
+    draw_right_column_projects(c, y_position, page_number)
 
-    draw_personal_data_info(c, personal_data_info, page_number)
-    draw_own_generate_info(c, own_generate_info, page_number)
+    draw_personal_data_info(c, page_number)
+    draw_own_generate_info(c, page_number)
 
 
 def draw_experience_entry(c, job, y_position, page_number):
@@ -308,8 +310,8 @@ def draw_experience_entry(c, job, y_position, page_number):
     return y_position, page_number
 
 
-def draw_right_column_projects(c, cv_data_json, y_position, page_number):
-    own_projects = cv_data_json.get("own_projects", [])
+def draw_right_column_projects(c, y_position, page_number):
+    own_projects = CV_DATA.get("own_projects", [])
 
     visual_config_default = VISUAL_CONFIG['right_own_project']['default']
     visual_config_link = VISUAL_CONFIG['right_own_project']['link']
@@ -348,10 +350,11 @@ if __name__ == '__main__':
         VISUAL_CONFIG = MappingProxyType(_visual_config)
 
     with open(f"data/cv_data_{company}.yaml", "r", encoding="utf-8") as file:
-        cv_data = yaml.safe_load(file)
+        _cv_data = yaml.safe_load(file)
+        CV_DATA = MappingProxyType(_cv_data)
 
-    pdf_filename = f"output/{unidecode.unidecode(cv_data['personal_info']['name']).replace(' ', '_')}_{company}.pdf"
-    pdf_filename_base = f"output/{unidecode.unidecode(cv_data['personal_info']['name']).replace(' ', '_')}.pdf"
+    pdf_filename = f"output/{unidecode.unidecode(CV_DATA['personal_info']['name']).replace(' ', '_')}_{company}.pdf"
+    pdf_filename_base = f"output/{unidecode.unidecode(CV_DATA['personal_info']['name']).replace(' ', '_')}.pdf"
 
 
     if os.path.isfile(pdf_filename):
@@ -361,8 +364,8 @@ if __name__ == '__main__':
         os.remove(pdf_filename_base)
         print(f"The Old {pdf_filename_base} has been removed.")
 
-    create_cv(pdf_filename, cv_data)
-    create_cv(pdf_filename_base, cv_data)
+    create_cv(pdf_filename)
+    create_cv(pdf_filename_base)
 
     if os.path.isfile(pdf_filename):
         print(f"The new {pdf_filename} has been generated.")
