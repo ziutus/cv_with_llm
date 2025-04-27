@@ -18,7 +18,7 @@ def page_add(c, page_number):
     add_footer(c, page_number)
     c.showPage()
     page_number += 1
-    draw_left_column_empty(c)
+    draw_left_column(c, page_number)
     y_position = HEIGHT - VISUAL_CONFIG['y_top_margin']
 
     return y_position, page_number
@@ -114,20 +114,11 @@ def create_cv(filename):
     pdfmetrics.registerFont(TTFont(VISUAL_CONFIG['fonts']['italic'], 'fonts/ArialCEItalic.ttf'))
     c.setFont(VISUAL_CONFIG['fonts']['default'], VISUAL_CONFIG['sizes']['normal'])
 
-    page_number = 1
-
     c.setFillColor(HexColor(VISUAL_CONFIG['colors']['text']))
-    draw_left_column(c, page_number)
-    draw_right_column(c, page_number)
+    draw_left_column(c, 1)
+    draw_right_column(c, 1)
 
     c.save()
-
-
-def draw_left_column_empty(c):
-    c.setFillColor(HexColor(VISUAL_CONFIG['colors']['grey_background']))
-    c.rect(VISUAL_CONFIG['x_left_column_grey_top'], VISUAL_CONFIG['y_left_column_grey_bottom'], VISUAL_CONFIG['column_left_width'], HEIGHT - VISUAL_CONFIG['column_left_high_minus'],
-           stroke=0, fill=1)
-
 
 def draw_left_column(c, page_number):
 
@@ -216,7 +207,10 @@ def draw_left_column(c, page_number):
             y_position, page_number = draw_entry_left(c, u"\u2022 " + language, VISUAL_CONFIG['left_default'],
                                                       y_position, page_number)
 
+    if page_number == 2:
+        y_position = HEIGHT - VISUAL_CONFIG['y_left_top_text_margin']
         courses = CV_DATA.get("courses", [])
+
         y_position -= VISUAL_CONFIG['y_left_column_space_headers']
         y_position, page_number = draw_entry_left(c, f"Courses", VISUAL_CONFIG['left_section_name'], y_position,
                                                   page_number)
