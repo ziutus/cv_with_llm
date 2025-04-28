@@ -10,6 +10,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.colors import HexColor
 
 from types import MappingProxyType
+import shutil
 
 WIDTH, HEIGHT = A4
 
@@ -106,7 +107,11 @@ def draw_entry_right(c, text, visual_setup, y_position, page_number, ignore_new_
 
 
 def create_cv(filename):
+    author_name = CV_DATA.get("personal_info", {}).get("name", "")
+
     c = canvas.Canvas(filename, pagesize=A4)
+    c.setAuthor(author_name)
+    c.setCreator("Generator CV: https://github.com/ziutus/cv_with_llm")
 
     pdfmetrics.registerFont(TTFont(VISUAL_CONFIG['fonts']['default'], 'fonts/ARIAL.TTF'))
     pdfmetrics.registerFont(TTFont(VISUAL_CONFIG['fonts']['bold'], 'fonts/ARIALBD.TTF'))
@@ -140,84 +145,137 @@ def draw_left_column(c, page_number):
 
         c.setFont(VISUAL_CONFIG['fonts']['default'], VISUAL_CONFIG['sizes']['small'])
 
-        links = CV_DATA.get("links", [])
-        for link in links:
-            cleaned_link = link['link_to_show']
-            link_name_text = f" ({link['name']})"
-            full_link_text = cleaned_link + link_name_text
-
-            y_position, page_number = draw_entry_left(c, full_link_text, VISUAL_CONFIG['left_default'], y_position,
-                                                      page_number)
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Top Skills", VISUAL_CONFIG['left_section_name'], y_position,
-                                                  page_number)
-
-        top_skills = CV_DATA.get("top_skills", [])
-        for skill in top_skills:
-            y_position, page_number = draw_entry_left(c, u"\u2022 " + skill, VISUAL_CONFIG['left_default'],
-                                                      y_position, page_number)
-
-        tools = CV_DATA.get("tools", [])
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Tools", VISUAL_CONFIG['left_section_name'], y_position,
-                                                  page_number)
-        y_position, page_number = draw_entry_left(c, ", ".join(tools), VISUAL_CONFIG['left_default'], y_position,
-                                                  page_number)
-
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Certificates", VISUAL_CONFIG['left_section_name'],
-                                                  y_position, page_number)
-
-        certificates = CV_DATA.get("certificates", [])
-        for certificate in certificates:
-            y_position, page_number = draw_entry_left(c, u"\u2022 " + certificate, VISUAL_CONFIG['left_default'],
-                                                      y_position, page_number)
-
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Education", VISUAL_CONFIG['left_section_name'], y_position,
-                                                  page_number)
-
-        education = CV_DATA.get("education", [])
-        for edu in education:
-            y_position, page_number = draw_education_entry_left(c, edu, y_position, page_number)
+        y_position, page_number = draw_left_column_links(c, y_position, page_number)
+        y_position, page_number = draw_left_column_top_skills(c, y_position, page_number)
+        y_position, page_number = draw_left_column_tools(c, y_position, page_number)
+        y_position, page_number = draw_left_column_certificates(c, y_position, page_number)
+        y_position, page_number = draw_left_column_education(c, y_position, page_number)
 
         own_projects = CV_DATA.get("own_projects", [])
+
         if own_projects['position'] == "left":
-            y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-            y_position, page_number = draw_entry_left(c, f"Own projects", VISUAL_CONFIG['left_section_name'],
-                                                      y_position, page_number)
-            for project in own_projects["projects"]:
-                y_position, page_number = draw_entry_left(c, u"\u2022 " + project["time"],
-                                                          VISUAL_CONFIG['left_default'], y_position, page_number)
-                if "technologies" in project:
-                    technologies = project["name"] + " (" + " ,".join(project["technologies"]) + ")"
-                    y_position, page_number = draw_entry_left(c, technologies,
-                                                              VISUAL_CONFIG['left_default'],
-                                                              y_position, page_number)
+            y_position, page_number = draw_left_column_own_projects(c, y_position, page_number, own_projects)
 
-                y_position, page_number = draw_entry_left(c, project["link_to_show"],
-                                                          VISUAL_CONFIG['left_default'], y_position, page_number)
-
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Languages", VISUAL_CONFIG['left_section_name'], y_position,
-                                                  page_number)
-
-        languages = CV_DATA.get("languages", [])
-        for language in languages:
-            y_position, page_number = draw_entry_left(c, u"\u2022 " + language, VISUAL_CONFIG['left_default'],
-                                                      y_position, page_number)
+        y_position, page_number = draw_left_column_languages(c, y_position, page_number)
 
     if page_number == 2:
         y_position = HEIGHT - VISUAL_CONFIG['y_left_top_text_margin']
-        courses = CV_DATA.get("courses", [])
+        y_position, page_number = draw_left_column_courses(c, y_position, page_number)
 
-        y_position -= VISUAL_CONFIG['y_left_column_space_headers']
-        y_position, page_number = draw_entry_left(c, f"Courses", VISUAL_CONFIG['left_section_name'], y_position,
+def draw_left_column_links(c, y_position, page_number):
+    links = CV_DATA.get("links", [])
+    for link in links:
+        cleaned_link = link['link_to_show']
+        link_name_text = f" ({link['name']})"
+        full_link_text = cleaned_link + link_name_text
+
+        y_position, page_number = draw_entry_left(c, full_link_text, VISUAL_CONFIG['left_default'], y_position,
                                                   page_number)
-        for course in courses:
-            y_position, page_number = draw_courses_left(c, course, y_position, page_number)
+
+    return y_position, page_number
 
 
+def draw_left_column_top_skills(c, y_position, page_number):
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+
+    y_position, page_number = draw_entry_left(c, f"Top Skills", VISUAL_CONFIG['left_section_name'], y_position,
+                                              page_number)
+
+    top_skills = CV_DATA.get("top_skills", [])
+    for skill in top_skills:
+        y_position, page_number = draw_entry_left(c, u"\u2022 " + skill, VISUAL_CONFIG['left_default'],
+                                                  y_position, page_number)
+
+    return y_position, page_number
+
+def draw_left_column_tools(c, y_position, page_number):
+    tools = CV_DATA.get("tools", [])
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Tools", VISUAL_CONFIG['left_section_name'], y_position,
+                                              page_number)
+    y_position, page_number = draw_entry_left(c, ", ".join(tools), VISUAL_CONFIG['left_default'], y_position,
+                                              page_number)
+
+    return y_position, page_number
+
+def draw_left_column_certificates(c, y_position, page_number):
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Certificates", VISUAL_CONFIG['left_section_name'],
+                                              y_position, page_number)
+
+    certificates = CV_DATA.get("certificates", [])
+    for certificate in certificates:
+        y_position, page_number = draw_entry_left(c, u"\u2022 " + certificate, VISUAL_CONFIG['left_default'],
+                                                  y_position, page_number)
+    return y_position, page_number
+
+def draw_left_column_education(c, y_position, page_number):
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Education", VISUAL_CONFIG['left_section_name'], y_position,
+                                              page_number)
+
+    education = CV_DATA.get("education", [])
+    for edu in education:
+        y_position, page_number = draw_education_entry_left(c, edu, y_position, page_number)
+
+    return y_position, page_number
+
+def draw_left_column_own_projects(c, y_position, page_number, own_projects):
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Own projects", VISUAL_CONFIG['left_section_name'],
+                                              y_position, page_number)
+    for project in own_projects["projects"]:
+        y_position, page_number = draw_entry_left(c, u"\u2022 " + project["time"],
+                                                  VISUAL_CONFIG['left_default'], y_position, page_number)
+        if "technologies" in project:
+            technologies = project["name"] + " (" + " ,".join(project["technologies"]) + ")"
+            y_position, page_number = draw_entry_left(c, technologies,
+                                                      VISUAL_CONFIG['left_default'],
+                                                      y_position, page_number)
+
+        y_position, page_number = draw_entry_left(c, project["link_to_show"],
+                                                  VISUAL_CONFIG['left_default'], y_position, page_number)
+
+    return y_position, page_number
+
+def draw_left_column_languages(c, y_position, page_number):
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Languages", VISUAL_CONFIG['left_section_name'], y_position,
+                                              page_number)
+
+    languages = CV_DATA.get("languages", [])
+    for language in languages:
+        y_position, page_number = draw_entry_left(c, u"\u2022 " + language, VISUAL_CONFIG['left_default'],
+                                                  y_position, page_number)
+    return y_position, page_number
+
+def draw_left_column_courses(c, y_position, page_number):
+    courses = CV_DATA.get("courses", [])
+
+    y_position -= VISUAL_CONFIG['y_left_column_space_headers']
+    y_position, page_number = draw_entry_left(c, f"Courses", VISUAL_CONFIG['left_section_name'], y_position,
+                                              page_number)
+    for course in courses:
+        y_position, page_number = draw_courses_left(c, course, y_position, page_number)
+
+    return y_position, page_number
+
+def draw_right_column_courses(c, y_position, page_number):
+    experience = CV_DATA.get("experience", [])
+
+    y_position, page_number = draw_entry_right(c, "Work Experience", VISUAL_CONFIG['section_name'],
+                                               y_position, page_number)
+
+    y_position -= VISUAL_CONFIG['right_own_project']['Y_top_margin']
+    for job in experience:
+        if y_position < 100 and page_number == 1:
+            y_position, page_number = page_add(c, page_number)
+            c.setFillColor(HexColor('#000000'))
+
+        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
+        y_position -= VISUAL_CONFIG['right_own_project']['Y_margin']
+
+    return y_position, page_number
 
 def draw_personal_data_info(c, page_number):
     personal_data_info = CV_DATA.get("personal_data_info", "")
@@ -252,25 +310,8 @@ def draw_education_entry_left(c, edu, y_position, page_number):
 
 
 def draw_right_column(c, page_number):
-    experience = CV_DATA.get("experience", [])
-
-
-
     y_position = HEIGHT - VISUAL_CONFIG['y_right_column_text_top_margin']
-
-    y_position, page_number = draw_entry_right(c, "Work Experience", VISUAL_CONFIG['section_name'],
-                                               y_position, page_number)
-
-    #
-    y_position -= VISUAL_CONFIG['right_own_project']['Y_top_margin']
-    for job in experience:
-        if y_position < 100 and page_number == 1:
-            y_position, page_number = page_add(c, page_number)
-            c.setFillColor(HexColor('#000000'))
-
-        y_position, page_number = draw_experience_entry(c, job, y_position, page_number)
-        y_position -= VISUAL_CONFIG['right_own_project']['Y_margin']
-
+    y_position, page_number = draw_right_column_courses(c, y_position, page_number)
     draw_right_column_projects(c, y_position, page_number)
 
     draw_personal_data_info(c, page_number)
@@ -361,7 +402,7 @@ if __name__ == '__main__':
         print(f"The Old {pdf_filename_base} has been removed.")
 
     create_cv(pdf_filename)
-    create_cv(pdf_filename_base)
+    shutil.copy2(pdf_filename, pdf_filename_base)
 
     if os.path.isfile(pdf_filename):
         print(f"The new {pdf_filename} has been generated.")
